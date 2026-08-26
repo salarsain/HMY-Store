@@ -1,0 +1,19 @@
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment files (if used)
+.env
+.env.local
+.env.production
+
+# Node modules (if npm is ever added)
+node_modules/
