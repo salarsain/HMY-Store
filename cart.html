@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Your Bag — HMY Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Announcement -->
+  <div class="announcement-bar" id="announcementBar">
+    <div class="marquee-track">
+      <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span><span class="ticker-item">★</span>
+      <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span><span class="ticker-item">★</span>
+      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span><span class="ticker-item">★</span>
+      <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span><span class="ticker-item">★</span>
+      <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span><span class="ticker-item">★</span>
+      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span><span class="ticker-item">★</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header site-header--solid" id="siteHeader">
+    <div class="header-inner">
+      <nav class="header-nav header-nav-left">
+        <a href="index.html" class="nav-link">HOME</a>
+        <a href="shop.html" class="nav-link">SHOP ALL</a>
+      </nav>
+      <button class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+      <a href="index.html" class="header-logo">HMY</a>
+      <div class="header-nav header-nav-right">
+        <a href="index.html#story" class="nav-link">OUR STORY</a>
+        <div class="header-actions">
+          <button class="btn-icon cart-btn" aria-label="Cart" style="pointer-events:none;">
+            <i class="fa-solid fa-bag-shopping"></i><span class="cart-count" data-cart-count>0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-drawer-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="mobile-drawer-header"><span class="mobile-drawer-logo">HMY</span><button class="btn-icon" id="closeMobileMenu"><i class="fa-solid fa-xmark"></i></button></div>
+    <nav class="mobile-nav">
+      <a href="index.html" class="mobile-nav-link">Home</a>
+      <a href="shop.html" class="mobile-nav-link">Shop All</a>
+      <a href="index.html#story" class="mobile-nav-link">Our Story</a>
+    </nav>
+  </aside>
+
+  <!-- Cart Page -->
+  <main class="cart-page">
+    <div class="container">
+      <div class="breadcrumb">
+        <a href="index.html">Home</a><span class="separator">/</span><span class="current">Your Bag</span>
+      </div>
+      <h1 class="section-heading" style="margin-bottom: var(--space-2xl);">Your Bag</h1>
+    </div>
+
+    <div class="cart-page-grid" id="cartPageContent">
+      <!-- Cart Items -->
+      <div id="cartItemsSection">
+        <div id="cartTableBody">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Order Summary -->
+      <div>
+        <div class="order-summary" id="orderSummary">
+          <h3>ORDER SUMMARY</h3>
+          <div class="order-summary-row"><span>Subtotal</span><span id="summarySubtotal">Rs. 0</span></div>
+          <div class="order-summary-row"><span>Delivery</span><span id="summaryShipping">Rs. 0</span></div>
+          <div class="order-summary-row" style="font-size: var(--text-xs); color: var(--color-text-muted);">
+            <span>Free delivery on orders over Rs. 5,000</span>
+          </div>
+          <div class="order-summary-total"><span>Total</span><span id="summaryTotal">Rs. 0</span></div>
+          <button class="btn-whatsapp btn-full" id="cartWhatsAppBtn" style="margin-top: 20px;">
+            <i class="fa-brands fa-whatsapp"></i> ORDER VIA WHATSAPP
+          </button>
+          <button class="btn-outline btn-full" id="continueShoppingBtn" style="margin-top: 8px; text-align: center;">
+            CONTINUE SHOPPING
+          </button>
+          <button class="btn-ghost btn-full" id="clearCartPageBtn" style="margin-top: 4px;">
+            Clear Bag
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="cartEmptyState" style="display: none;">
+      <div class="empty-state-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+      <h3>Your Bag is Empty</h3>
+      <p>Looks like you haven't added anything to your bag yet.</p>
+      <a href="shop.html" class="btn-primary" style="margin-top: 24px;">START SHOPPING</a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col"><span class="footer-brand">HMY</span><p class="footer-desc">Luxury Eastern Fashion & Royal Fragrances.</p></div>
+      <div class="footer-col"><h4>SHOP</h4><a href="shop.html?cat=men-stitched">Men</a><a href="shop.html?cat=women-stitched">Women</a><a href="shop.html?cat=perfumes">Perfumes</a><a href="shop.html?cat=special-attar">Attar</a></div>
+      <div class="footer-col"><h4>HELP</h4><a href="#">Shipping</a><a href="#">FAQs</a></div>
+      <div class="footer-col"><h4>CONTACT</h4><a href="#"><i class="fa-solid fa-envelope"></i> support@hmy-store.com</a><a href="#"><i class="fa-solid fa-phone"></i> +92 300 123 4567</a></div>
+    </div>
+    <div class="footer-bottom"><span>&copy; 2026 HMY.</span><div class="payment-icons"><i class="fa-brands fa-cc-visa"></i><i class="fa-brands fa-cc-mastercard"></i><i class="fa-solid fa-money-bill-wave"></i></div></div>
+  </footer>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+  // ── Cart Page Logic ──
+  document.addEventListener('DOMContentLoaded', () => {
+    function toast(msg) { const c=document.getElementById('toastContainer'); const el=document.createElement('div'); el.className='toast'; el.textContent=msg; c.appendChild(el); setTimeout(()=>el.remove(),3000); }
+
+    const cartTableBody = document.getElementById('cartTableBody');
+    const cartPageContent = document.getElementById('cartPageContent');
+    const cartEmptyState = document.getElementById('cartEmptyState');
+    const cartWhatsAppBtn = document.getElementById('cartWhatsAppBtn');
+    const continueShoppingBtn = document.getElementById('continueShoppingBtn');
+    const clearCartPageBtn = document.getElementById('clearCartPageBtn');
+
+    continueShoppingBtn?.addEventListener('click', () => window.location.href = 'shop.html');
+    clearCartPageBtn?.addEventListener('click', () => { Cart.clear(); renderCartPage(); toast('Bag cleared'); });
+    cartWhatsAppBtn?.addEventListener('click', () => {
+      if (Cart.getCount() === 0) return;
+      // Save to Supabase + WhatsApp
+      saveAndWhatsApp();
+    });
+
+    async function saveAndWhatsApp() {
+      cartWhatsAppBtn.disabled = true;
+      cartWhatsAppBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> PROCESSING...';
+      try {
+        const payload = Cart.buildOrderPayload();
+        const { url, anonKey } = CONFIG.supabase;
+        if (url && anonKey) {
+          const sb = supabase.createClient(url, anonKey);
+          await sb.from('orders').insert([payload]);
+        }
+      } catch(e) { console.warn('Save warning:', e); }
+
+      Cart.openWhatsApp();
+      setTimeout(() => {
+        Cart.clear();
+        renderCartPage();
+        cartWhatsAppBtn.disabled = false;
+        cartWhatsAppBtn.innerHTML = '<i class="fa-brands fa-whatsapp"></i> ORDER VIA WHATSAPP';
+        toast('Order sent to WhatsApp!');
+      }, 1500);
+    }
+
+    function renderCartPage() {
+      const items = Cart.getItems();
+
+      if (!items.length) {
+        cartPageContent.style.display = 'none';
+        cartEmptyState.style.display = 'block';
+        return;
+      }
+      cartPageContent.style.display = 'grid';
+      cartEmptyState.style.display = 'none';
+
+      // Update summary
+      const subtotal = Cart.getSubtotal();
+      const shipping = Cart.getShipping();
+      document.getElementById('summarySubtotal').textContent = formatPrice(subtotal);
+      document.getElementById('summaryShipping').textContent = shipping === 0 ? 'FREE' : formatPrice(shipping);
+      document.getElementById('summaryTotal').textContent = formatPrice(Cart.getTotal());
+
+      // Render items
+      cartTableBody.innerHTML = `
+        <div class="cart-table-header">
+          <span>PRODUCT</span><span>SIZE</span><span>QTY</span><span>TOTAL</span><span></span>
+        </div>
+        ${items.map(item => `
+          <div class="cart-table-row">
+            <div class="cart-table-product">
+              <img src="${item.image}" alt="">
+              <div class="cart-table-product-info">
+                <div class="cart-table-product-title">${item.title}</div>
+                <div class="cart-table-product-meta">${item.color || ''} — ${formatPrice(item.price)}</div>
+              </div>
+            </div>
+            <span>${item.size || '—'}</span>
+            <div class="qty-selector">
+              <button class="qty-btn" data-action="dec" data-key="${item.key}">−</button>
+              <span class="qty-value">${item.qty}</span>
+              <button class="qty-btn" data-action="inc" data-key="${item.key}">+</button>
+            </div>
+            <span style="font-weight:600;">${formatPrice(item.price * item.qty)}</span>
+            <button class="cart-item-remove" data-key="${item.key}" title="Remove"><i class="fa-solid fa-trash-can"></i></button>
+          </div>
+        `).join('')}
+      `;
+
+      // Events
+      cartTableBody.querySelectorAll('.qty-btn').forEach(b => b.addEventListener('click', () => {
+        if(b.dataset.action==='inc') Cart.increment(b.dataset.key); else Cart.decrement(b.dataset.key);
+        renderCartPage();
+      }));
+      cartTableBody.querySelectorAll('.cart-item-remove').forEach(b => b.addEventListener('click', () => {
+        Cart.removeItem(b.dataset.key); renderCartPage(); toast('Item removed');
+      }));
+    }
+
+    // Mobile menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const closeMobileMenu = document.getElementById('closeMobileMenu');
+    const mobileDrawer = document.getElementById('mobileDrawer');
+    const mobileOverlay = document.getElementById('mobileOverlay');
+    mobileMenuBtn?.addEventListener('click', () => { mobileDrawer.classList.add('open'); mobileOverlay.classList.add('open'); });
+    closeMobileMenu?.addEventListener('click', () => { mobileDrawer.classList.remove('open'); mobileOverlay.classList.remove('open'); });
+    mobileOverlay?.addEventListener('click', () => { mobileDrawer.classList.remove('open'); mobileOverlay.classList.remove('open'); });
+
+    // Announcement bar
+    window.addEventListener('scroll', () => {
+      const bar = document.getElementById('announcementBar');
+      const hdr = document.getElementById('siteHeader');
+      if (window.scrollY > 50) { bar.style.transform = 'translateY(-100%)'; hdr.style.top = '0'; }
+      else { bar.style.transform = 'translateY(0)'; hdr.style.top = '36px'; }
+    }, { passive: true });
+
+    document.addEventListener('keydown', (e) => { if(e.key==='Escape') { mobileDrawer.classList.remove('open'); mobileOverlay.classList.remove('open'); } });
+
+    renderCartPage();
+  });
+  </script>
+</body>
+</html>

@@ -1,99 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>HMY - Luxury Eastern Fashion & Royal Fragrances</title>
-  <meta name="description"
-    content="Shop HMY signature eastern fashion — Men & Women stitched/unstitched collections, luxury perfumes, Islamic topis, and pure special attars.">
+  <title>HMY — Luxury Eastern Fashion & Royal Fragrances</title>
+  <meta name="description" content="Shop HMY signature eastern fashion — Men & Women stitched/unstitched collections, luxury perfumes, Islamic topis, and pure special attars. Cash on delivery nationwide.">
 
-  <!-- Fonts: Cormorant Garamond for headings (luxury serif), Inter for body -->
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  <!-- FontAwesome Icons -->
+  <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-  <link rel="stylesheet" href="style.css">
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages.css">
 </head>
-
 <body>
 
-  <!-- Ticker Top Bar -->
-  <div class="top-bar">
-    <div class="ticker-wrap">
+  <!-- ═══════ ANNOUNCEMENT TICKER ═══════ -->
+  <div class="announcement-bar" id="announcementBar">
+    <div class="marquee-track">
       <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span>
+      <span class="ticker-item">★</span>
       <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span>
-      <span class="ticker-item">USE CODE <strong>HMY10</strong> FOR 10% OFF</span>
+      <span class="ticker-item">★</span>
       <span class="ticker-item">PREMIUM QUALITY ATTARS & EASTERN FASHION</span>
+      <span class="ticker-item">★</span>
+      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span>
+      <span class="ticker-item">★</span>
+      <!-- Duplicate for seamless marquee -->
       <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span>
+      <span class="ticker-item">★</span>
       <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span>
-      <span class="ticker-item">USE CODE <strong>HMY10</strong> FOR 10% OFF</span>
+      <span class="ticker-item">★</span>
       <span class="ticker-item">PREMIUM QUALITY ATTARS & EASTERN FASHION</span>
+      <span class="ticker-item">★</span>
+      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span>
+      <span class="ticker-item">★</span>
     </div>
   </div>
-  <!-- Sticky Header -->
-  <header class="header" id="header">
+
+  <!-- ═══════ HEADER ═══════ -->
+  <header class="site-header site-header--transparent" id="siteHeader">
     <div class="header-inner">
-      <!-- Left: Nav links -->
-      <nav class="main-nav nav-left" id="mainNav">
-        <a href="#" class="nav-item active" data-section="home">HOME</a>
-        <div class="nav-item has-dropdown" id="catDropdown">
-          <span class="nav-item-trigger">CATEGORIES <i class="fa-solid fa-chevron-down nav-arrow"></i></span>
+      <!-- Left Nav -->
+      <nav class="header-nav header-nav-left">
+        <a href="index.html" class="nav-link active">HOME</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav-link">CATEGORIES <i class="fa-solid fa-chevron-down" style="font-size: 0.6em; margin-left: 4px;"></i></a>
           <div class="mega-menu">
-            <div class="mega-menu-inner">
+            <div class="mega-menu-grid">
               <div class="mega-col">
-                <h4 class="mega-heading">Men</h4>
-                <a href="#shop" class="mega-link cat-link" data-category="men-stitched">Stitched</a>
-                <a href="#shop" class="mega-link cat-link" data-category="men-unstitched">Unstitched</a>
+                <h4>Men</h4>
+                <a href="shop.html?cat=men-stitched" class="mega-link">Stitched</a>
+                <a href="shop.html?cat=men-unstitched" class="mega-link">Unstitched</a>
               </div>
               <div class="mega-col">
-                <h4 class="mega-heading">Women</h4>
-                <a href="#shop" class="mega-link cat-link" data-category="women-stitched">Stitched</a>
-                <a href="#shop" class="mega-link cat-link" data-category="women-unstitched">Unstitched</a>
+                <h4>Women</h4>
+                <a href="shop.html?cat=women-stitched" class="mega-link">Stitched</a>
+                <a href="shop.html?cat=women-unstitched" class="mega-link">Unstitched</a>
               </div>
               <div class="mega-col">
-                <h4 class="mega-heading">Fragrances</h4>
-                <a href="#shop" class="mega-link cat-link" data-category="perfumes">Perfumes</a>
-                <a href="#shop" class="mega-link cat-link" data-category="special-attar">Special Attar</a>
+                <h4>Fragrances</h4>
+                <a href="shop.html?cat=perfumes" class="mega-link">Perfumes</a>
+                <a href="shop.html?cat=special-attar" class="mega-link">Special Attar</a>
               </div>
               <div class="mega-col">
-                <h4 class="mega-heading">Accessories</h4>
-                <a href="#shop" class="mega-link cat-link" data-category="islamic-topis">Islamic Topis</a>
+                <h4>Accessories</h4>
+                <a href="shop.html?cat=islamic-topis" class="mega-link">Islamic Topis</a>
               </div>
             </div>
           </div>
         </div>
-        <a href="#shop" class="nav-item" data-section="shop">SHOP ALL</a>
+        <a href="shop.html" class="nav-link">SHOP ALL</a>
       </nav>
 
       <!-- Mobile Menu Button -->
-      <button class="header-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+      <button class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
         <i class="fa-solid fa-bars"></i>
       </button>
 
-      <!-- Center: Logo -->
-      <a href="#" class="header-logo" id="headerLogo">
-        <span class="logo-main">HMY</span>
-      </a>
+      <!-- Center Logo -->
+      <a href="index.html" class="header-logo">HMY</a>
 
-      <!-- Right: Nav + Icons -->
-      <div class="header-right">
-        <nav class="main-nav nav-right">
-          <a href="#story" class="nav-item">OUR STORY</a>
-          <a href="#contact" class="nav-item">CONTACT</a>
-        </nav>
+      <!-- Right Nav + Actions -->
+      <div class="header-nav header-nav-right">
+        <a href="#story" class="nav-link">OUR STORY</a>
+        <a href="#contact" class="nav-link">CONTACT</a>
         <div class="header-actions">
-          <button class="header-icon" id="searchToggle" aria-label="Search">
+          <button class="btn-icon" id="searchToggle" aria-label="Search">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
-          <button class="header-icon cart-icon-btn" id="openCartBtn" aria-label="Cart">
+          <button class="btn-icon cart-btn" id="openCartBtn" aria-label="Cart">
             <i class="fa-solid fa-bag-shopping"></i>
-            <span class="cart-count" id="cartCount">0</span>
+            <span class="cart-count" data-cart-count>0</span>
           </button>
         </div>
       </div>
@@ -102,177 +108,193 @@
     <!-- Search Overlay -->
     <div class="search-overlay" id="searchOverlay">
       <div class="search-overlay-inner">
-        <input type="text" id="searchInput" placeholder="Search for products..." autocomplete="off">
-        <button class="search-close-btn" id="searchCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+        <input type="text" id="searchInput" placeholder="Search products..." autocomplete="off">
+        <button class="btn-icon" id="searchCloseBtn"><i class="fa-solid fa-xmark"></i></button>
       </div>
     </div>
   </header>
 
-  <!-- ========== HERO: Scroll-Snap Full-Screen Video Panels ========== -->
-  <section class="hero-scroll" id="home">
-    <div class="hero-panel">
-      <video autoplay muted loop playsinline class="hero-video">
-        <source
-          src="https://pk.ethnc.com/cdn/shop/videos/c/vp/cef2d1110a3b40219ab6dab44599aef2/cef2d1110a3b40219ab6dab44599aef2.HD-720p-4.5Mbps-91787823.mp4?v=0"
-          type="video/mp4">
-      </video>
-      <div class="hero-overlay"></div>
-    </div>
-
-    <div class="hero-panel">
-      <img
-        src="https://pk.ethnc.com/cdn/shop/files/BANNER_1_d10b836e-463c-4961-a2aa-2dcc2bd1759e_1600x.jpg?v=1786949842"
-        alt="HMY Collection" class="hero-video">
-      <div class="hero-overlay"></div>
-      <div class="hero-caption">
-        <span class="hero-eyebrow">ROYAL FRAGRANCES</span>
-        <h1 class="hero-heading">Pure Attars &amp;<br>Luxury Perfumes</h1>
-        <a href="#shop" class="hero-btn">EXPLORE</a>
-      </div>
-    </div>
-
-    <div class="hero-panel">
-      <video autoplay muted loop playsinline class="hero-video">
-        <source
-          src="https://pk.ethnc.com/cdn/shop/videos/c/vp/dba3346fe8cd496f8931c9e675bbfefd/dba3346fe8cd496f8931c9e675bbfefd.HD-720p-4.5Mbps-90496390.mp4?v=0"
-          type="video/mp4">
-      </video>
-    </div>
-  </section>
-
-  <!-- Mobile Drawer Menu -->
-  <div class="mobile-overlay" id="mobileOverlay"></div>
+  <!-- ═══════ MOBILE DRAWER ═══════ -->
+  <div class="mobile-drawer-overlay" id="mobileOverlay"></div>
   <aside class="mobile-drawer" id="mobileDrawer">
     <div class="mobile-drawer-header">
-      <span class="logo-main" style="font-size: 1.4rem; color: #121212;">HMY</span>
-      <button class="header-icon" id="closeMobileMenu"><i class="fa-solid fa-xmark"></i></button>
+      <span class="mobile-drawer-logo">HMY</span>
+      <button class="btn-icon" id="closeMobileMenu"><i class="fa-solid fa-xmark"></i></button>
     </div>
     <nav class="mobile-nav">
-      <a href="#" class="mobile-nav-link" data-section="home">Home</a>
+      <a href="index.html" class="mobile-nav-link">Home</a>
       <div class="mobile-accordion">
         <button class="mobile-accordion-trigger">Categories <i class="fa-solid fa-plus"></i></button>
         <div class="mobile-accordion-content">
           <span class="mobile-sub-heading">Men</span>
-          <a href="#shop" class="mobile-sub-link cat-link" data-category="men-stitched">Stitched</a>
-          <a href="#shop" class="mobile-sub-link cat-link" data-category="men-unstitched">Unstitched</a>
+          <a href="shop.html?cat=men-stitched" class="mobile-sub-link">Stitched</a>
+          <a href="shop.html?cat=men-unstitched" class="mobile-sub-link">Unstitched</a>
           <span class="mobile-sub-heading">Women</span>
-          <a href="#shop" class="mobile-sub-link cat-link" data-category="women-stitched">Stitched</a>
-          <a href="#shop" class="mobile-sub-link cat-link" data-category="women-unstitched">Unstitched</a>
+          <a href="shop.html?cat=women-stitched" class="mobile-sub-link">Stitched</a>
+          <a href="shop.html?cat=women-unstitched" class="mobile-sub-link">Unstitched</a>
           <span class="mobile-sub-heading">Fragrances</span>
-          <a href="#shop" class="mobile-sub-link cat-link" data-category="perfumes">Perfumes</a>
-          <a href="#shop" class="mobile-sub-link cat-link" data-category="special-attar">Special Attar</a>
+          <a href="shop.html?cat=perfumes" class="mobile-sub-link">Perfumes</a>
+          <a href="shop.html?cat=special-attar" class="mobile-sub-link">Special Attar</a>
           <span class="mobile-sub-heading">Accessories</span>
-          <a href="#shop" class="mobile-sub-link cat-link" data-category="islamic-topis">Islamic Topis</a>
+          <a href="shop.html?cat=islamic-topis" class="mobile-sub-link">Islamic Topis</a>
         </div>
       </div>
-      <a href="#shop" class="mobile-nav-link">Shop All</a>
+      <a href="shop.html" class="mobile-nav-link">Shop All</a>
       <a href="#story" class="mobile-nav-link">Our Story</a>
       <a href="#contact" class="mobile-nav-link">Contact</a>
     </nav>
   </aside>
 
-
-  <!-- ========== SHOP SECTION ========== -->
-  <section class="section shop-section" id="shop">
-    <div class="section-container">
-      <!-- Section Title -->
-      <div class="section-title-bar">
-        <h2 class="section-title" id="shopTitle">Featured Collection</h2>
-        <div class="shop-controls">
-          <!-- Active filter tag -->
-          <div class="active-filter" id="activeFilter" style="display: none;">
-            <span id="activeFilterText"></span>
-            <button id="clearFilter"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-          <select class="sort-dropdown" id="sortSelect">
-            <option value="featured">Sort by: Featured</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="rating">Top Rated</option>
-          </select>
-        </div>
+  <!-- ═══════ HERO — FULL-SCREEN VIDEO PANELS ═══════ -->
+  <section class="hero" id="hero">
+    <!-- Panel 1 -->
+    <div class="hero-panel" id="heroPanel0">
+      <video autoplay muted loop playsinline class="hero-video-bg">
+        <source src="videos/hero-1.mp4" type="video/mp4">
+      </video>
+      <!-- Fallback image if no video yet -->
+      <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1600&auto=format&fit=crop&q=80" alt="HMY Eastern Fashion" style="display: none;" class="hero-fallback">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-eyebrow hero-animate-up">THE ART OF EASTERN LUXURY</span>
+        <h1 class="hero-heading hero-animate-up-delay">Redefining<br>Eastern Elegance</h1>
+        <a href="shop.html" class="btn-primary hero-animate-up-delay-2">EXPLORE COLLECTION</a>
       </div>
+      <div class="hero-scroll-indicator">
+        <span>Scroll</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
 
-      <!-- Products Grid (Ethnic-style tight grid) -->
-      <div class="products-grid" id="productsGrid"></div>
+    <!-- Panel 2 -->
+    <div class="hero-panel" id="heroPanel1">
+      <video autoplay muted loop playsinline class="hero-video-bg">
+        <source src="videos/hero-2.mp4" type="video/mp4">
+      </video>
+      <img src="https://images.unsplash.com/photo-1597983073493-88cd35cf93b0?w=1600&auto=format&fit=crop&q=80" alt="Men Collection" style="display: none;" class="hero-fallback">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-eyebrow">MEN'S COLLECTION</span>
+        <h1 class="hero-heading">Royal Kurtas &<br>Premium Fabrics</h1>
+        <a href="shop.html?cat=men-stitched" class="btn-primary">SHOP MEN</a>
+      </div>
+    </div>
 
-      <!-- Empty State -->
-      <div class="empty-state" id="emptyState" style="display: none;">
-        <p>No products match your criteria.</p>
-        <button class="btn-underline" id="resetBtn">View All Products</button>
+    <!-- Panel 3 -->
+    <div class="hero-panel" id="heroPanel2">
+      <video autoplay muted loop playsinline class="hero-video-bg">
+        <source src="videos/hero-3.mp4" type="video/mp4">
+      </video>
+      <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1600&auto=format&fit=crop&q=80" alt="Women Collection" style="display: none;" class="hero-fallback">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-eyebrow">WOMEN'S COLLECTION</span>
+        <h1 class="hero-heading">Luxury Chiffon &<br>Velvet Pret</h1>
+        <a href="shop.html?cat=women-stitched" class="btn-primary">SHOP WOMEN</a>
       </div>
     </div>
   </section>
 
-  <!-- ========== BRAND STORY / VIDEO SECTION ========== -->
-  <section class="section story-section" id="story">
+  <!-- Hero Side Dots -->
+  <div class="hero-dots" id="heroDots">
+    <button class="hero-dot active" data-panel="0"></button>
+    <button class="hero-dot" data-panel="1"></button>
+    <button class="hero-dot" data-panel="2"></button>
+  </div>
+
+  <!-- ═══════ FEATURED PRODUCTS ═══════ -->
+  <section class="featured-section section" id="featured">
+    <div class="container">
+      <div class="featured-header reveal">
+        <span class="eyebrow">Curated For You</span>
+        <h2 class="section-heading">Featured Collection</h2>
+        <div class="divider divider-center"></div>
+      </div>
+    </div>
+    <div class="featured-scroll stagger" id="featuredGrid">
+      <!-- Populated by JS -->
+    </div>
+    <div class="container" style="text-align: center; margin-top: var(--space-2xl);">
+      <a href="shop.html" class="btn-outline reveal">VIEW ALL PRODUCTS</a>
+    </div>
+  </section>
+
+  <!-- ═══════ CATEGORY SHOWCASE ═══════ -->
+  <section class="section" id="categories" style="padding: 0;">
+    <div class="category-showcase stagger" id="categoryShowcase">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <!-- ═══════ BRAND STORY ═══════ -->
+  <section class="story-section section" id="story">
     <div class="story-grid">
-      <div class="story-video-col">
-        <video autoplay muted loop playsinline class="story-video">
+      <div class="story-media reveal-left">
+        <video autoplay muted loop playsinline>
           <source src="https://www.pexels.com/download/video/10547950/" type="video/mp4">
         </video>
       </div>
-      <div class="story-text-col">
-        <span class="label-text">THE ART OF HMY</span>
-        <h2 class="editorial-heading">Crafted With Royal Passion & Precision</h2>
-        <p class="editorial-body">
-          From intricately hand-embroidered kurtas to the rarest aged Dehn Al Oud, every HMY creation embodies an
-          unwavering commitment to excellence and authenticity.
-        </p>
+      <div class="story-text reveal-right">
+        <span class="eyebrow">THE ART OF HMY</span>
+        <h2 class="section-heading">Crafted With Royal<br>Passion & Precision</h2>
+        <p>From intricately hand-embroidered kurtas to the rarest aged Dehn Al Oud, every HMY creation embodies an unwavering commitment to excellence and authenticity.</p>
         <div class="story-features">
           <div class="story-feature">
-            <span class="feature-dot"></span>
+            <span class="story-feature-dot"></span>
             <span>100% Pure, Non-Alcoholic Special Attars</span>
           </div>
           <div class="story-feature">
-            <span class="feature-dot"></span>
+            <span class="story-feature-dot"></span>
             <span>Premium Egyptian Cotton & Raw Silks</span>
           </div>
           <div class="story-feature">
-            <span class="feature-dot"></span>
+            <span class="story-feature-dot"></span>
             <span>Hand-Embroidered Velvet Prayer Caps</span>
           </div>
+          <div class="story-feature">
+            <span class="story-feature-dot"></span>
+            <span>Cash on Delivery — Nationwide Pakistan</span>
+          </div>
         </div>
-        <a href="#shop" class="btn-dark">SHOP THE COLLECTION</a>
+        <a href="shop.html" class="btn-primary">SHOP THE COLLECTION</a>
       </div>
     </div>
   </section>
 
-  <!-- ========== NEWSLETTER / CONTACT ========== -->
-  <section class="section newsletter-section" id="contact">
-    <div class="newsletter-inner">
-      <h2 class="editorial-heading">Join The HMY Circle</h2>
-      <p class="editorial-body">Subscribe for exclusive early access, limited-edition drops and VIP offers.</p>
+  <!-- ═══════ NEWSLETTER ═══════ -->
+  <section class="newsletter-section section" id="contact">
+    <div class="newsletter-inner reveal">
+      <span class="eyebrow">Stay Connected</span>
+      <h2 class="section-heading">Join The HMY Circle</h2>
+      <p style="margin: 0 auto;">Subscribe for exclusive early access, limited-edition drops and VIP offers.</p>
       <form class="newsletter-form" id="newsletterForm">
-        <input type="email" id="newsletterEmail" placeholder="Your email address" required>
-        <button type="submit" class="btn-dark">SUBSCRIBE</button>
+        <input type="email" placeholder="Your email address" required>
+        <button type="submit">SUBSCRIBE</button>
       </form>
     </div>
   </section>
 
-  <!-- ========== FOOTER (Ethnic style minimal) ========== -->
+  <!-- ═══════ FOOTER ═══════ -->
   <footer class="site-footer">
-    <div class="footer-inner">
+    <div class="footer-grid">
       <div class="footer-col">
-        <span class="logo-main footer-brand">HMY</span>
-        <p class="footer-desc">Luxury Eastern Fashion & Royal Fragrances — crafted with passion and precision since
-          2020.</p>
+        <span class="footer-brand">HMY</span>
+        <p class="footer-desc">Luxury Eastern Fashion & Royal Fragrances — crafted with passion and precision since 2020.</p>
         <div class="footer-socials">
-          <a href="#"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
-          <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
         </div>
       </div>
       <div class="footer-col">
         <h4>SHOP</h4>
-        <a href="#shop" class="cat-link" data-category="men-stitched">Men — Stitched</a>
-        <a href="#shop" class="cat-link" data-category="men-unstitched">Men — Unstitched</a>
-        <a href="#shop" class="cat-link" data-category="women-stitched">Women — Stitched</a>
-        <a href="#shop" class="cat-link" data-category="women-unstitched">Women — Unstitched</a>
-        <a href="#shop" class="cat-link" data-category="perfumes">Perfumes</a>
-        <a href="#shop" class="cat-link" data-category="islamic-topis">Islamic Topis</a>
-        <a href="#shop" class="cat-link" data-category="special-attar">Special Attar</a>
+        <a href="shop.html?cat=men-stitched">Men — Stitched</a>
+        <a href="shop.html?cat=men-unstitched">Men — Unstitched</a>
+        <a href="shop.html?cat=women-stitched">Women — Stitched</a>
+        <a href="shop.html?cat=women-unstitched">Women — Unstitched</a>
+        <a href="shop.html?cat=perfumes">Perfumes</a>
+        <a href="shop.html?cat=special-attar">Special Attar</a>
       </div>
       <div class="footer-col">
         <h4>HELP</h4>
@@ -298,90 +320,36 @@
     </div>
   </footer>
 
-  <!-- ========== CART DRAWER ========== -->
-  <div class="drawer-overlay" id="cartOverlay"></div>
+  <!-- ═══════ CART DRAWER ═══════ -->
+  <div class="cart-drawer-overlay" id="cartOverlay"></div>
   <aside class="cart-drawer" id="cartDrawer">
-    <div class="drawer-head">
-      <h3>YOUR BAG (<span id="drawerCount">0</span>)</h3>
-      <button id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button>
+    <div class="cart-drawer-header">
+      <h3>YOUR BAG (<span data-cart-count>0</span>)</h3>
+      <button class="btn-icon" id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button>
     </div>
-    <div class="drawer-body" id="cartItems"></div>
-    <div class="drawer-foot">
-      <div class="summary-row"><span>Subtotal</span><span id="cartSubtotal">Rs. 0</span></div>
-      <div class="summary-row"><span>Delivery</span><span id="cartShipping">Calculated at checkout</span></div>
-      <div class="summary-row total"><span>Total</span><span id="cartTotal">Rs. 0</span></div>
-      <button class="btn-dark full-width" id="checkoutBtn">CHECKOUT</button>
-      <button class="btn-ghost full-width" id="clearCartBtn">Clear Bag</button>
+    <div class="cart-drawer-body" id="cartDrawerBody">
+      <!-- Populated by JS -->
+    </div>
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-row"><span>Subtotal</span><span id="cartSubtotal">Rs. 0</span></div>
+      <div class="cart-summary-row"><span>Delivery</span><span id="cartShipping">Calculated at checkout</span></div>
+      <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">Rs. 0</span></div>
+      <button class="btn-whatsapp btn-full" id="whatsappCheckoutBtn" style="margin-top: 16px;">
+        <i class="fa-brands fa-whatsapp"></i> ORDER VIA WHATSAPP
+      </button>
+      <a href="cart.html" class="btn-outline btn-full" style="margin-top: 8px; text-align: center;">VIEW FULL CART</a>
+      <button class="btn-ghost btn-full" id="clearCartBtn" style="margin-top: 4px;">Clear Bag</button>
     </div>
   </aside>
 
-  <!-- ========== QUICK VIEW MODAL ========== -->
-  <div class="modal-bg" id="quickViewModal">
-    <div class="modal-box quickview-box">
-      <button class="modal-x" id="closeQVBtn"><i class="fa-solid fa-xmark"></i></button>
-      <div class="quickview-inner" id="quickViewBody"></div>
-    </div>
-  </div>
+  <!-- ═══════ TOAST ═══════ -->
+  <div class="toast-container" id="toastContainer"></div>
 
-  <!-- ========== CHECKOUT MODAL ========== -->
-  <div class="modal-bg" id="checkoutModal">
-    <div class="modal-box checkout-box">
-      <button class="modal-x" id="closeCheckoutBtn"><i class="fa-solid fa-xmark"></i></button>
-      <h3 class="checkout-title">Complete Your Order</h3>
-      <form class="checkout-form" id="checkoutForm">
-        <div class="form-row-2">
-          <div class="form-field">
-            <label>Full Name</label>
-            <input type="text" id="orderName" required>
-          </div>
-          <div class="form-field">
-            <label>Phone (WhatsApp)</label>
-            <input type="tel" id="orderPhone" required>
-          </div>
-        </div>
-        <div class="form-field">
-          <label>Email</label>
-          <input type="email" id="orderEmail" required>
-        </div>
-        <div class="form-field">
-          <label>Shipping Address</label>
-          <textarea id="orderAddress" rows="2" required></textarea>
-        </div>
-        <div class="form-field">
-          <label>Payment</label>
-          <select id="payMethod">
-            <option>Cash on Delivery (COD)</option>
-            <option>Credit / Debit Card</option>
-            <option>Bank Transfer</option>
-          </select>
-        </div>
-        <div class="order-summary-mini">
-          <div class="summary-row"><span>Items Total</span><strong id="modalSub">Rs. 0</strong></div>
-          <div class="summary-row total"><span>Grand Total</span><strong id="modalTotal">Rs. 0</strong></div>
-        </div>
-        <button type="submit" class="btn-dark full-width">PLACE ORDER</button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ========== SUCCESS MODAL ========== -->
-  <div class="modal-bg" id="successModal">
-    <div class="modal-box success-box">
-      <div class="success-check"><i class="fa-solid fa-check"></i></div>
-      <h2>Order Placed!</h2>
-      <p>Thank you for shopping with HMY. We'll contact you with tracking details shortly.</p>
-      <div class="order-ref">Order: <strong id="orderId">#HMY-00000</strong></div>
-      <button class="btn-dark full-width" id="continueShopping">CONTINUE SHOPPING</button>
-    </div>
-  </div>
-
-  <!-- Toast -->
-  <div class="toast-wrap" id="toastWrap"></div>
-
+  <!-- ═══════ SCRIPTS ═══════ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabase-config.js"></script>
-  <script src="products.js"></script>
-  <script src="script.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
 </body>
-
 </html>

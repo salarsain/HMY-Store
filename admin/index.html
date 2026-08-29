@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — HMY Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+  <div class="admin-login-page">
+    <div class="admin-login-card">
+      <div class="admin-logo">HMY</div>
+      <div class="admin-login-subtitle">Admin Panel</div>
+
+      <div class="admin-login-error" id="loginError">
+        <i class="fa-solid fa-circle-exclamation"></i> <span id="loginErrorText"></span>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="loginEmail" placeholder="admin@hmy-store.com" required autocomplete="email">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" required autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn-primary" id="loginBtn">
+          <i class="fa-solid fa-lock"></i> SIGN IN
+        </button>
+      </form>
+
+      <p style="margin-top: 24px; font-size: 0.75rem; color: var(--color-text-muted);">
+        <a href="../index.html" style="color: var(--color-gold);">← Back to Store</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/config.js"></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const sb = supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.anonKey);
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    const loginErrorText = document.getElementById('loginErrorText');
+    const loginBtn = document.getElementById('loginBtn');
+
+    // Check if already logged in
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        window.location.href = 'dashboard.html';
+      }
+    });
+
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      loginError.style.display = 'none';
+
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      loginBtn.disabled = true;
+      loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SIGNING IN...';
+
+      try {
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+        if (error) {
+          loginError.style.display = 'block';
+          loginErrorText.textContent = error.message || 'Invalid email or password.';
+          loginBtn.disabled = false;
+          loginBtn.innerHTML = '<i class="fa-solid fa-lock"></i> SIGN IN';
+          return;
+        }
+
+        // Success — redirect to dashboard
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        loginError.style.display = 'block';
+        loginErrorText.textContent = 'Connection error. Please try again.';
+        loginBtn.disabled = false;
+        loginBtn.innerHTML = '<i class="fa-solid fa-lock"></i> SIGN IN';
+      }
+    });
+  });
+  </script>
+</body>
+</html>

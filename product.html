@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Product — HMY Luxury Eastern Fashion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Announcement Bar -->
+  <div class="announcement-bar" id="announcementBar">
+    <div class="marquee-track">
+      <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span><span class="ticker-item">★</span>
+      <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span><span class="ticker-item">★</span>
+      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span><span class="ticker-item">★</span>
+      <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span><span class="ticker-item">★</span>
+      <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span><span class="ticker-item">★</span>
+      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span><span class="ticker-item">★</span>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header site-header--solid" id="siteHeader">
+    <div class="header-inner">
+      <nav class="header-nav header-nav-left">
+        <a href="index.html" class="nav-link">HOME</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav-link">CATEGORIES <i class="fa-solid fa-chevron-down" style="font-size:0.6em;margin-left:4px;"></i></a>
+          <div class="mega-menu"><div class="mega-menu-grid">
+            <div class="mega-col"><h4>Men</h4><a href="shop.html?cat=men-stitched" class="mega-link">Stitched</a><a href="shop.html?cat=men-unstitched" class="mega-link">Unstitched</a></div>
+            <div class="mega-col"><h4>Women</h4><a href="shop.html?cat=women-stitched" class="mega-link">Stitched</a><a href="shop.html?cat=women-unstitched" class="mega-link">Unstitched</a></div>
+            <div class="mega-col"><h4>Fragrances</h4><a href="shop.html?cat=perfumes" class="mega-link">Perfumes</a><a href="shop.html?cat=special-attar" class="mega-link">Special Attar</a></div>
+            <div class="mega-col"><h4>Accessories</h4><a href="shop.html?cat=islamic-topis" class="mega-link">Islamic Topis</a></div>
+          </div></div>
+        </div>
+        <a href="shop.html" class="nav-link">SHOP ALL</a>
+      </nav>
+      <button class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+      <a href="index.html" class="header-logo">HMY</a>
+      <div class="header-nav header-nav-right">
+        <a href="index.html#story" class="nav-link">OUR STORY</a>
+        <a href="index.html#contact" class="nav-link">CONTACT</a>
+        <div class="header-actions">
+          <button class="btn-icon" id="searchToggle" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <button class="btn-icon cart-btn" id="openCartBtn" aria-label="Cart">
+            <i class="fa-solid fa-bag-shopping"></i><span class="cart-count" data-cart-count>0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-drawer-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="mobile-drawer-header"><span class="mobile-drawer-logo">HMY</span><button class="btn-icon" id="closeMobileMenu"><i class="fa-solid fa-xmark"></i></button></div>
+    <nav class="mobile-nav">
+      <a href="index.html" class="mobile-nav-link">Home</a>
+      <a href="shop.html" class="mobile-nav-link">Shop All</a>
+      <a href="index.html#story" class="mobile-nav-link">Our Story</a>
+      <a href="index.html#contact" class="mobile-nav-link">Contact</a>
+    </nav>
+  </aside>
+
+  <!-- Product Detail Content -->
+  <main class="product-detail">
+    <div class="container">
+      <div class="breadcrumb" id="productBreadcrumb">
+        <a href="index.html">Home</a>
+        <span class="separator">/</span>
+        <a href="shop.html">Shop</a>
+        <span class="separator">/</span>
+        <span class="current" id="breadcrumbProduct">Product</span>
+      </div>
+    </div>
+    <div class="product-detail-grid" id="productDetailGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- Related Products -->
+    <div class="container" style="margin-top: var(--space-section);">
+      <div class="featured-header text-center reveal">
+        <span class="eyebrow">You May Also Like</span>
+        <h2 class="section-heading">Related Products</h2>
+        <div class="divider divider-center"></div>
+      </div>
+      <div class="products-grid stagger" id="relatedGrid" style="max-width: 100%;"></div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col"><span class="footer-brand">HMY</span><p class="footer-desc">Luxury Eastern Fashion & Royal Fragrances — crafted with passion and precision since 2020.</p><div class="footer-socials"><a href="#"><i class="fa-brands fa-instagram"></i></a><a href="#"><i class="fa-brands fa-facebook-f"></i></a><a href="#"><i class="fa-brands fa-whatsapp"></i></a><a href="#"><i class="fa-brands fa-tiktok"></i></a></div></div>
+      <div class="footer-col"><h4>SHOP</h4><a href="shop.html?cat=men-stitched">Men — Stitched</a><a href="shop.html?cat=women-stitched">Women — Stitched</a><a href="shop.html?cat=perfumes">Perfumes</a><a href="shop.html?cat=special-attar">Special Attar</a></div>
+      <div class="footer-col"><h4>HELP</h4><a href="#">Shipping</a><a href="#">Size Guide</a><a href="#">FAQs</a></div>
+      <div class="footer-col"><h4>CONTACT</h4><a href="#"><i class="fa-solid fa-envelope"></i> support@hmy-store.com</a><a href="#"><i class="fa-solid fa-phone"></i> +92 300 123 4567</a></div>
+    </div>
+    <div class="footer-bottom"><span>&copy; 2026 HMY.</span><div class="payment-icons"><i class="fa-brands fa-cc-visa"></i><i class="fa-brands fa-cc-mastercard"></i><i class="fa-solid fa-money-bill-wave"></i></div></div>
+  </footer>
+
+  <!-- Cart Drawer -->
+  <div class="cart-drawer-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header"><h3>YOUR BAG (<span data-cart-count>0</span>)</h3><button class="btn-icon" id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="cart-drawer-body" id="cartDrawerBody"></div>
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-row"><span>Subtotal</span><span id="cartSubtotal">Rs. 0</span></div>
+      <div class="cart-summary-row"><span>Delivery</span><span id="cartShipping">Calculated</span></div>
+      <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">Rs. 0</span></div>
+      <button class="btn-whatsapp btn-full" id="whatsappCheckoutBtn" style="margin-top:16px;"><i class="fa-brands fa-whatsapp"></i> ORDER VIA WHATSAPP</button>
+      <a href="cart.html" class="btn-outline btn-full" style="margin-top:8px;text-align:center;">VIEW FULL CART</a>
+      <button class="btn-ghost btn-full" id="clearCartBtn" style="margin-top:4px;">Clear Bag</button>
+    </div>
+  </aside>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/product-detail.js"></script>
+</body>
+</html>
