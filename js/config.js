@@ -12,7 +12,7 @@ const CONFIG = {
 
   // WhatsApp (owner's number — international format without +)
   whatsapp: {
-    number: '923001234567',  // UPDATE THIS: owner's WhatsApp number
+    number: '923128464742',  // UPDATE THIS: owner's WhatsApp number
     businessName: 'HMY Store'
   },
 
