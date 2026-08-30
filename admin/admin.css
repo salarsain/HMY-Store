@@ -590,3 +590,108 @@
   color: var(--color-text-muted);
   margin-top: 2px;
 }
+
+/* ══════════════════════════════════════
+   CMS STYLES
+   ══════════════════════════════════════ */
+
+.cms-input {
+  width: 100%;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--color-cream);
+  padding: 10px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  transition: border-color 0.2s;
+}
+.cms-input:focus {
+  outline: none;
+  border-color: var(--color-gold);
+}
+.cms-input::placeholder {
+  color: var(--color-text-muted);
+}
+select.cms-input {
+  appearance: auto;
+  cursor: pointer;
+}
+textarea.cms-input {
+  resize: vertical;
+  min-height: 60px;
+}
+
+.cms-field {
+  margin-bottom: 14px;
+}
+.cms-field label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: 6px;
+}
+
+.cms-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, var(--color-gold), #B8922E);
+  color: var(--color-black);
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.cms-save-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(201,169,110,0.3);
+}
+
+.cms-list-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.cms-remove-btn {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid rgba(232,80,91,0.3);
+  color: #E8505B;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.cms-remove-btn:hover {
+  background: rgba(232,80,91,0.15);
+  border-color: #E8505B;
+}
+
+.cms-hero-panel {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

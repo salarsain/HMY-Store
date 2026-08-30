@@ -288,5 +288,98 @@ document.addEventListener('DOMContentLoaded', () => {
   Cart.updateUI();
   ThemeManager.init();
   SplashManager.init();
+  CMSContent.init();
 });
 
+// ==========================================================================
+// CMS Content Loader — reads admin overrides from localStorage
+// ==========================================================================
+const CMSContent = {
+  STORAGE_KEY: 'hmy_site_content',
+
+  init() {
+    const stored = localStorage.getItem(this.STORAGE_KEY);
+    if (!stored) return;
+
+    try {
+      const content = JSON.parse(stored);
+      this.applyAnnouncements(content.announcements);
+      this.applyHero(content.hero);
+      this.applyStory(content.story);
+    } catch (e) {
+      console.warn('CMS content parse error:', e);
+    }
+  },
+
+  applyAnnouncements(announcements) {
+    if (!announcements || !announcements.length) return;
+    const bar = document.getElementById('announcementBar');
+    if (!bar) return;
+
+    const track = bar.querySelector('.marquee-track');
+    if (!track) return;
+
+    // Build ticker items with stars between them
+    const items = announcements.map(text => `<span class="ticker-item">${text}</span><span class="ticker-item">★</span>`).join('');
+    // Duplicate for seamless loop
+    track.innerHTML = items + items;
+  },
+
+  applyHero(hero) {
+    if (!hero || !hero.length) return;
+
+    hero.forEach((panel, i) => {
+      const el = document.getElementById('heroPanel' + i);
+      if (!el) return;
+
+      // Update video source
+      if (panel.video) {
+        const video = el.querySelector('video source');
+        if (video && video.getAttribute('src') !== panel.video) {
+          video.setAttribute('src', panel.video);
+          const videoEl = el.querySelector('video');
+          if (videoEl) videoEl.load();
+        }
+      }
+
+      // Update text
+      const eyebrow = el.querySelector('.hero-eyebrow');
+      const heading = el.querySelector('.hero-heading');
+      const btn = el.querySelector('.btn-primary');
+
+      if (eyebrow && panel.eyebrow) eyebrow.textContent = panel.eyebrow;
+      if (heading && panel.heading) heading.innerHTML = panel.heading;
+      if (btn && panel.btnText) btn.textContent = panel.btnText;
+      if (btn && panel.btnLink) btn.setAttribute('href', panel.btnLink);
+    });
+  },
+
+  applyStory(story) {
+    if (!story) return;
+
+    // Story video
+    if (story.video) {
+      const storySection = document.getElementById('story');
+      if (storySection) {
+        const video = storySection.querySelector('video source');
+        if (video && video.getAttribute('src') !== story.video) {
+          video.setAttribute('src', story.video);
+          const videoEl = storySection.querySelector('video');
+          if (videoEl) videoEl.load();
+        }
+      }
+    }
+
+    // Story heading
+    if (story.heading) {
+      const heading = document.querySelector('.story-text .section-heading');
+      if (heading) heading.textContent = story.heading;
+    }
+
+    // Story text
+    if (story.text) {
+      const paragraph = document.querySelector('.story-text p');
+      if (paragraph) paragraph.textContent = story.text;
+    }
+  }
+};

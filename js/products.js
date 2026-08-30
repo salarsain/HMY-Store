@@ -371,32 +371,43 @@ const PRODUCTS = [
     featured: false
   }
 ];
+// ══════════════════════════════════════
+// Helper: Get active product list (localStorage override or defaults)
+// ══════════════════════════════════════
+function _getActiveProducts() {
+  try {
+    const custom = localStorage.getItem('hmy_products_custom');
+    if (custom) return JSON.parse(custom);
+  } catch (e) {}
+  return PRODUCTS;
+}
 
 // Get product by ID
 function getProductById(id) {
-  return PRODUCTS.find(p => p.id === parseInt(id));
+  return _getActiveProducts().find(p => p.id === parseInt(id));
 }
 
 // Get product by slug
 function getProductBySlug(slug) {
-  return PRODUCTS.find(p => p.slug === slug);
+  return _getActiveProducts().find(p => p.slug === slug);
 }
 
 // Get products by category
 function getProductsByCategory(category) {
-  if (category === 'all') return PRODUCTS;
-  return PRODUCTS.filter(p => p.category === category);
+  const products = _getActiveProducts();
+  if (category === 'all') return products;
+  return products.filter(p => p.category === category);
 }
 
 // Get featured products
 function getFeaturedProducts() {
-  return PRODUCTS.filter(p => p.featured);
+  return _getActiveProducts().filter(p => p.featured);
 }
 
 // Search products
 function searchProducts(query) {
   const q = query.toLowerCase();
-  return PRODUCTS.filter(p =>
+  return _getActiveProducts().filter(p =>
     p.title.toLowerCase().includes(q) ||
     p.description.toLowerCase().includes(q) ||
     p.categoryLabel.toLowerCase().includes(q)

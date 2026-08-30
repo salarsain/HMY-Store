@@ -39,7 +39,7 @@
     <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
       <div>
         <h1 style="font-family: var(--font-body); font-size: 1.5rem; font-weight: 600; color: var(--color-cream); margin-bottom: 4px;">Dashboard</h1>
-        <p style="font-size: 0.85rem; color: var(--color-text-muted);">Welcome back — here's what's happening today.</p>
+        <p style="font-size: 0.85rem; color: var(--color-text-muted);">Welcome back — manage your store content.</p>
       </div>
       <div style="font-size: 0.8rem; color: var(--color-text-muted);" id="lastUpdated">Last updated: —</div>
     </div>
@@ -64,19 +64,20 @@
       </div>
     </div>
 
-    <!-- Tabs: Orders / Activity -->
+    <!-- Tabs: Orders / Products / Site Content / Activity -->
     <div class="admin-tabs">
       <button class="admin-tab active" data-tab="orders"><i class="fa-solid fa-clipboard-list"></i> Orders</button>
+      <button class="admin-tab" data-tab="products"><i class="fa-solid fa-shirt"></i> Products</button>
+      <button class="admin-tab" data-tab="content"><i class="fa-solid fa-pen-ruler"></i> Site Content</button>
       <button class="admin-tab" data-tab="activity"><i class="fa-solid fa-chart-line"></i> Activity</button>
     </div>
 
-    <!-- TAB 1: Orders -->
+    <!-- ═══ TAB 1: ORDERS ═══ -->
     <div class="tab-content active" id="tab-orders">
       <div class="orders-section">
         <div class="orders-header">
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
             <h2>All Orders</h2>
-            <!-- Search -->
             <div class="admin-search-wrap">
               <i class="fa-solid fa-magnifying-glass"></i>
               <input type="text" id="orderSearch" placeholder="Search orders..." class="admin-search-input">
@@ -96,46 +97,106 @@
             </button>
           </div>
         </div>
-
         <div class="orders-table-wrap">
           <table class="orders-table" id="ordersTable">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Phone</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Phone</th><th>Items</th><th>Total</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
             <tbody id="ordersBody"></tbody>
           </table>
         </div>
-
         <div class="orders-empty" id="ordersEmpty" style="display:none;">
-          <i class="fa-solid fa-inbox"></i>
-          <p>No orders found.</p>
+          <i class="fa-solid fa-inbox"></i><p>No orders found.</p>
         </div>
       </div>
     </div>
 
-    <!-- TAB 2: Activity -->
+    <!-- ═══ TAB 2: PRODUCTS ═══ -->
+    <div class="tab-content" id="tab-products">
+      <div class="orders-section">
+        <div class="orders-header">
+          <h2>All Products</h2>
+          <button class="export-btn" id="addProductBtn" style="border-color: var(--color-gold); color: var(--color-gold);">
+            <i class="fa-solid fa-plus"></i> Add Product
+          </button>
+        </div>
+
+        <div class="orders-table-wrap">
+          <table class="orders-table" id="productsTable">
+            <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Price</th><th>Original</th><th>Badge</th><th>Featured</th><th>Actions</th></tr></thead>
+            <tbody id="productsBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ TAB 3: SITE CONTENT ═══ -->
+    <div class="tab-content" id="tab-content">
+
+      <!-- Announcement Bar Editor -->
+      <div class="orders-section" style="padding: 28px;">
+        <div class="orders-header" style="margin-bottom: 16px;">
+          <h2><i class="fa-solid fa-bullhorn" style="color:var(--color-gold);margin-right:8px;"></i> Announcement Bar</h2>
+          <button class="export-btn" id="resetAnnouncementBtn" style="border-color:#E8505B;color:#E8505B;">
+            <i class="fa-solid fa-rotate-left"></i> Reset to Default
+          </button>
+        </div>
+        <p style="font-size:0.8rem;color:var(--color-text-muted);margin-bottom:16px;">Edit the scrolling ticker text shown at the top of every page.</p>
+        <div id="announcementItems"></div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <input type="text" id="newAnnouncementText" placeholder="Add new announcement text..." class="cms-input" style="flex:1;">
+          <button class="export-btn" id="addAnnouncementBtn" style="border-color:var(--color-gold);color:var(--color-gold);">
+            <i class="fa-solid fa-plus"></i> Add
+          </button>
+        </div>
+        <button class="cms-save-btn" id="saveAnnouncementBtn"><i class="fa-solid fa-floppy-disk"></i> Save Announcement Bar</button>
+      </div>
+
+      <!-- Hero Videos Editor -->
+      <div class="orders-section" style="padding: 28px; margin-top: 16px;">
+        <div class="orders-header" style="margin-bottom: 16px;">
+          <h2><i class="fa-solid fa-film" style="color:var(--color-gold);margin-right:8px;"></i> Hero Videos (Landing Page)</h2>
+          <button class="export-btn" id="resetHeroBtn" style="border-color:#E8505B;color:#E8505B;">
+            <i class="fa-solid fa-rotate-left"></i> Reset to Default
+          </button>
+        </div>
+        <p style="font-size:0.8rem;color:var(--color-text-muted);margin-bottom:16px;">Edit the 3 hero video panels on the landing page. Paste direct .mp4 video URLs.</p>
+        <div id="heroEditors"></div>
+        <button class="cms-save-btn" id="saveHeroBtn"><i class="fa-solid fa-floppy-disk"></i> Save Hero Videos</button>
+      </div>
+
+      <!-- Story Video Editor -->
+      <div class="orders-section" style="padding: 28px; margin-top: 16px;">
+        <div class="orders-header" style="margin-bottom: 16px;">
+          <h2><i class="fa-solid fa-book-open" style="color:var(--color-gold);margin-right:8px;"></i> Our Story Section</h2>
+          <button class="export-btn" id="resetStoryBtn" style="border-color:#E8505B;color:#E8505B;">
+            <i class="fa-solid fa-rotate-left"></i> Reset to Default
+          </button>
+        </div>
+        <p style="font-size:0.8rem;color:var(--color-text-muted);margin-bottom:16px;">Edit the video and text in the "Our Story" section.</p>
+        <div class="cms-field">
+          <label>Story Video URL (.mp4)</label>
+          <input type="text" id="storyVideoUrl" class="cms-input" placeholder="https://example.com/story-video.mp4">
+        </div>
+        <div class="cms-field">
+          <label>Story Heading</label>
+          <input type="text" id="storyHeading" class="cms-input" placeholder="Our Heritage">
+        </div>
+        <div class="cms-field">
+          <label>Story Text</label>
+          <textarea id="storyText" class="cms-input" rows="4" placeholder="Story paragraph text..."></textarea>
+        </div>
+        <button class="cms-save-btn" id="saveStoryBtn"><i class="fa-solid fa-floppy-disk"></i> Save Story</button>
+      </div>
+    </div>
+
+    <!-- ═══ TAB 4: ACTIVITY ═══ -->
     <div class="tab-content" id="tab-activity">
       <div class="orders-section" style="padding: 32px;">
         <h2 style="font-family:var(--font-body);font-size:0.85rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-cream);margin-bottom:20px;">Recent Activity</h2>
-        <div id="activityList" class="activity-list">
-          <!-- Populated by JS -->
-        </div>
+        <div id="activityList" class="activity-list"></div>
         <div class="orders-empty" id="activityEmpty" style="display:none;">
-          <i class="fa-solid fa-chart-line"></i>
-          <p>No recent activity.</p>
+          <i class="fa-solid fa-chart-line"></i><p>No recent activity.</p>
         </div>
       </div>
-
-      <!-- Quick Stats Table -->
       <div class="orders-section" style="padding:32px;margin-top:16px;">
         <h2 style="font-family:var(--font-body);font-size:0.85rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-cream);margin-bottom:20px;">Order Breakdown</h2>
         <div id="orderBreakdown"></div>
@@ -155,8 +216,8 @@
   <div class="order-detail-modal" id="deleteModal">
     <div class="order-detail-card" style="max-width:420px;text-align:center;padding:40px;">
       <i class="fa-solid fa-triangle-exclamation" style="font-size:2.5rem;color:#E8505B;margin-bottom:16px;"></i>
-      <h3 style="font-size:1rem;margin-bottom:8px;color:var(--color-cream);">Delete Order?</h3>
-      <p style="font-size:0.85rem;color:var(--color-text-muted);margin-bottom:24px;">This action cannot be undone. The order will be permanently deleted.</p>
+      <h3 style="font-size:1rem;margin-bottom:8px;color:var(--color-cream);">Delete?</h3>
+      <p style="font-size:0.85rem;color:var(--color-text-muted);margin-bottom:24px;" id="deleteModalText">This action cannot be undone.</p>
       <div style="display:flex;gap:8px;justify-content:center;">
         <button class="admin-logout" id="cancelDeleteBtn" style="padding:10px 24px;">Cancel</button>
         <button class="admin-logout" id="confirmDeleteBtn" style="padding:10px 24px;border-color:#E8505B;color:#E8505B;">
@@ -166,306 +227,56 @@
     </div>
   </div>
 
+  <!-- Product Form Modal -->
+  <div class="order-detail-modal" id="productModal">
+    <div class="order-detail-card" style="max-width:600px;padding:32px;max-height:90vh;overflow-y:auto;">
+      <button class="order-detail-close" onclick="document.getElementById('productModal').classList.remove('open')"><i class="fa-solid fa-xmark"></i></button>
+      <h2 style="font-family:var(--font-body);font-size:1.1rem;font-weight:600;color:var(--color-cream);margin-bottom:20px;" id="productFormTitle">Add Product</h2>
+      <form id="productForm">
+        <input type="hidden" id="pf_id">
+        <div class="cms-field"><label>Title *</label><input type="text" id="pf_title" class="cms-input" required></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="cms-field"><label>Category *</label>
+            <select id="pf_category" class="cms-input">
+              <option value="men-stitched">Men — Stitched</option>
+              <option value="men-unstitched">Men — Unstitched</option>
+              <option value="women-stitched">Women — Stitched</option>
+              <option value="women-unstitched">Women — Unstitched</option>
+              <option value="perfumes">Perfumes</option>
+              <option value="islamic-topis">Islamic Topis</option>
+              <option value="special-attar">Special Attar</option>
+            </select>
+          </div>
+          <div class="cms-field"><label>Badge</label><input type="text" id="pf_badge" class="cms-input" placeholder="e.g. Bestseller, New"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="cms-field"><label>Price (Rs.) *</label><input type="number" id="pf_price" class="cms-input" required></div>
+          <div class="cms-field"><label>Original Price (Rs.)</label><input type="number" id="pf_originalPrice" class="cms-input"></div>
+        </div>
+        <div class="cms-field"><label>Description</label><textarea id="pf_description" class="cms-input" rows="3"></textarea></div>
+        <div class="cms-field"><label>Image URLs (one per line)</label><textarea id="pf_images" class="cms-input" rows="3" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"></textarea></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div class="cms-field"><label>Sizes (comma-separated)</label><input type="text" id="pf_sizes" class="cms-input" placeholder="S, M, L, XL"></div>
+          <div class="cms-field"><label>Colors (name:hex, comma-sep)</label><input type="text" id="pf_colors" class="cms-input" placeholder="Black:#1A1A1A, Navy:#1B2A4A"></div>
+        </div>
+        <div class="cms-field"><label>Fabric / Notes</label><input type="text" id="pf_fabric" class="cms-input"></div>
+        <div class="cms-field"><label>Care Instructions</label><input type="text" id="pf_care" class="cms-input"></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem;color:var(--color-text-light);">
+            <input type="checkbox" id="pf_featured"> Featured Product
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:0.85rem;color:var(--color-text-light);">
+            <input type="checkbox" id="pf_inStock" checked> In Stock
+          </label>
+        </div>
+        <button type="submit" class="cms-save-btn" style="width:100%;"><i class="fa-solid fa-floppy-disk"></i> Save Product</button>
+      </form>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="../js/config.js"></script>
-  <script>
-  document.addEventListener('DOMContentLoaded', async () => {
-    const sb = supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.anonKey);
-
-    // ── Auth check ──
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) { window.location.href = 'index.html'; return; }
-
-    // ── Logout ──
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      await sb.auth.signOut(); window.location.href = 'index.html';
-    });
-
-    // ── State ──
-    let allOrders = [];
-    let currentFilter = 'all';
-    let searchQuery = '';
-    let deleteOrderId = null;
-
-    // ── Tabs ──
-    document.querySelectorAll('.admin-tab').forEach(tab => {
-      tab.addEventListener('click', () => {
-        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        tab.classList.add('active');
-        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-      });
-    });
-
-    // ── Fetch Orders ──
-    async function fetchOrders() {
-      try {
-        const { data, error } = await sb.from('orders').select('*').order('created_at', { ascending: false });
-        if (error) throw error;
-        allOrders = data || [];
-      } catch (err) {
-        console.error('Fetch error:', err);
-        allOrders = [];
-      }
-      updateStats();
-      renderOrders();
-      renderActivity();
-      renderBreakdown();
-      document.getElementById('lastUpdated').textContent = 'Last updated: ' + new Date().toLocaleTimeString();
-    }
-
-    // ── Refresh ──
-    document.getElementById('refreshBtn').addEventListener('click', fetchOrders);
-
-    // ── Search ──
-    document.getElementById('orderSearch').addEventListener('input', (e) => {
-      searchQuery = e.target.value.toLowerCase().trim();
-      renderOrders();
-    });
-
-    // ── Stats ──
-    function updateStats() {
-      const today = new Date().toISOString().split('T')[0];
-      const todayOrders = allOrders.filter(o => o.created_at && o.created_at.startsWith(today));
-      const pendingOrders = allOrders.filter(o => o.status === 'pending');
-      const totalRevenue = allOrders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + (parseFloat(o.total) || 0), 0);
-
-      document.getElementById('statTotal').textContent = allOrders.length;
-      document.getElementById('statToday').textContent = todayOrders.length;
-      document.getElementById('statRevenue').textContent = 'Rs. ' + totalRevenue.toLocaleString();
-      document.getElementById('statPending').textContent = pendingOrders.length;
-    }
-
-    // ── Render Orders ──
-    function renderOrders() {
-      const ordersBody = document.getElementById('ordersBody');
-      const ordersEmpty = document.getElementById('ordersEmpty');
-
-      let filtered = currentFilter === 'all' ? [...allOrders] : allOrders.filter(o => o.status === currentFilter);
-
-      // Apply search
-      if (searchQuery) {
-        filtered = filtered.filter(o =>
-          (o.order_id || '').toLowerCase().includes(searchQuery) ||
-          (o.customer_name || '').toLowerCase().includes(searchQuery) ||
-          (o.phone || '').toLowerCase().includes(searchQuery) ||
-          (o.email || '').toLowerCase().includes(searchQuery)
-        );
-      }
-
-      if (!filtered.length) { ordersBody.innerHTML = ''; ordersEmpty.style.display = 'block'; return; }
-      ordersEmpty.style.display = 'none';
-
-      ordersBody.innerHTML = filtered.map(order => {
-        const items = Array.isArray(order.items) ? order.items : [];
-        const itemCount = items.reduce((s, i) => s + (i.qty || 1), 0);
-        const date = order.created_at ? new Date(order.created_at).toLocaleDateString('en-PK', { day:'2-digit', month:'short', year:'numeric' }) : '—';
-
-        return `<tr>
-          <td class="order-id-cell" data-id="${order.id}" title="Click to view details">${order.order_id || '—'}</td>
-          <td>${order.customer_name || '—'}</td>
-          <td><a href="tel:${order.phone}" style="color:var(--color-gold);text-decoration:none;">${order.phone || '—'}</a></td>
-          <td>${itemCount} item${itemCount !== 1 ? 's' : ''}</td>
-          <td style="font-weight:600;">Rs. ${(parseFloat(order.total) || 0).toLocaleString()}</td>
-          <td><span class="status-badge ${order.status || 'pending'}">${(order.status || 'pending').toUpperCase()}</span></td>
-          <td>${date}</td>
-          <td style="display:flex;gap:4px;">
-            <select class="status-select" data-id="${order.id}" data-current="${order.status || 'pending'}">
-              <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
-              <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
-              <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Shipped</option>
-              <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
-              <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-            </select>
-            <button class="delete-order-btn" data-id="${order.id}" title="Delete" style="background:none;border:1px solid rgba(232,80,91,0.3);color:#E8505B;width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.75rem;transition:all 0.2s;">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
-          </td>
-        </tr>`;
-      }).join('');
-
-      // Status change
-      ordersBody.querySelectorAll('.status-select').forEach(sel => {
-        sel.addEventListener('change', async () => {
-          const id = sel.dataset.id;
-          try { await sb.from('orders').update({ status: sel.value }).eq('id', id); await fetchOrders(); } catch (e) { console.error(e); }
-        });
-      });
-
-      // View detail
-      ordersBody.querySelectorAll('.order-id-cell').forEach(cell => {
-        cell.addEventListener('click', () => {
-          const order = allOrders.find(o => String(o.id) === cell.dataset.id);
-          if (order) showOrderDetail(order);
-        });
-      });
-
-      // Delete buttons
-      ordersBody.querySelectorAll('.delete-order-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          deleteOrderId = btn.dataset.id;
-          document.getElementById('deleteModal').classList.add('open');
-        });
-      });
-    }
-
-    // ── Delete Confirmation ──
-    document.getElementById('cancelDeleteBtn').addEventListener('click', () => {
-      document.getElementById('deleteModal').classList.remove('open');
-      deleteOrderId = null;
-    });
-    document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
-      if (!deleteOrderId) return;
-      const btn = document.getElementById('confirmDeleteBtn');
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
-      try {
-        await sb.from('orders').delete().eq('id', deleteOrderId);
-        await fetchOrders();
-      } catch (e) { console.error(e); }
-      document.getElementById('deleteModal').classList.remove('open');
-      btn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
-      deleteOrderId = null;
-    });
-
-    // ── Order Detail Modal ──
-    function showOrderDetail(order) {
-      const modal = document.getElementById('orderModal');
-      const content = document.getElementById('orderDetailContent');
-      const items = Array.isArray(order.items) ? order.items : [];
-      const date = order.created_at ? new Date(order.created_at).toLocaleString('en-PK', { dateStyle:'full', timeStyle:'short' }) : '—';
-
-      content.innerHTML = `
-        <button class="order-detail-close" onclick="document.getElementById('orderModal').classList.remove('open')"><i class="fa-solid fa-xmark"></i></button>
-        <div class="order-detail-header">
-          <h2>Order ${order.order_id || '—'}</h2>
-          <div class="order-detail-date">${date}</div>
-          <span class="status-badge ${order.status || 'pending'}" style="margin-top:8px;">${(order.status || 'pending').toUpperCase()}</span>
-        </div>
-        <div class="order-detail-section" style="margin-top:24px;">
-          <h4>Customer Information</h4>
-          <div class="order-detail-row"><span>Name</span><strong>${order.customer_name || '—'}</strong></div>
-          <div class="order-detail-row"><span>Phone</span><strong><a href="tel:${order.phone}" style="color:var(--color-gold);text-decoration:none;">${order.phone || '—'}</a></strong></div>
-          <div class="order-detail-row"><span>Email</span><strong>${order.email || '—'}</strong></div>
-          <div class="order-detail-row"><span>Address</span><strong>${order.shipping_address || '—'}</strong></div>
-          <div class="order-detail-row"><span>Payment</span><strong>${order.payment_method || 'Cash on Delivery'}</strong></div>
-        </div>
-        <div class="order-detail-section">
-          <h4>Items (${items.length})</h4>
-          ${items.map(item => `
-            <div class="order-item-row">
-              <img src="${item.image || ''}" alt="" class="order-item-img" onerror="this.style.display='none'">
-              <div class="order-item-info">
-                <div class="order-item-title">${item.title || '—'}</div>
-                <div class="order-item-meta">${item.size || ''}${item.size && item.color ? ' / ' : ''}${item.color || ''} × ${item.qty || 1}</div>
-              </div>
-              <div class="order-item-price">Rs. ${((item.price||0)*(item.qty||1)).toLocaleString()}</div>
-            </div>`).join('')}
-        </div>
-        <div class="order-detail-section">
-          <h4>Payment Summary</h4>
-          <div class="order-detail-row"><span>Subtotal</span><strong>Rs. ${(parseFloat(order.subtotal)||0).toLocaleString()}</strong></div>
-          <div class="order-detail-row"><span>Shipping</span><strong>${parseFloat(order.shipping_cost)===0?'FREE':'Rs. '+(parseFloat(order.shipping_cost)||0).toLocaleString()}</strong></div>
-          <div class="order-detail-row" style="font-size:1.1rem;padding-top:10px;border-top:1px solid rgba(255,255,255,0.08);"><span>Total</span><strong style="color:var(--color-gold);">Rs. ${(parseFloat(order.total)||0).toLocaleString()}</strong></div>
-        </div>
-        <div style="margin-top:20px;display:flex;gap:8px;">
-          <a href="https://wa.me/${order.phone?.replace(/[^0-9]/g,'')}" target="_blank" class="admin-logout" style="padding:10px 20px;border-color:#25D366;color:#25D366;text-decoration:none;">
-            <i class="fa-brands fa-whatsapp"></i> WhatsApp Customer
-          </a>
-          <button onclick="window.print()" class="admin-logout" style="padding:10px 20px;">
-            <i class="fa-solid fa-print"></i> Print
-          </button>
-        </div>
-      `;
-      modal.classList.add('open');
-    }
-
-    // ── Activity Feed ──
-    function renderActivity() {
-      const list = document.getElementById('activityList');
-      const empty = document.getElementById('activityEmpty');
-      if (!allOrders.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
-      empty.style.display = 'none';
-
-      const recent = allOrders.slice(0, 10);
-      list.innerHTML = recent.map(o => {
-        const time = o.created_at ? new Date(o.created_at).toLocaleString('en-PK', { dateStyle:'medium', timeStyle:'short' }) : '—';
-        const statusColors = { pending:'#FFC107', confirmed:'#6495ED', shipped:'var(--color-gold)', delivered:'#25D366', cancelled:'#E8505B' };
-        const color = statusColors[o.status] || '#FFC107';
-        return `<div class="activity-item">
-          <div class="activity-dot" style="background:${color};"></div>
-          <div class="activity-info">
-            <strong>${o.customer_name || 'Unknown'}</strong> placed order <span style="color:var(--color-gold);">${o.order_id || '—'}</span> — Rs. ${(parseFloat(o.total)||0).toLocaleString()}
-            <div class="activity-time">${time}</div>
-          </div>
-        </div>`;
-      }).join('');
-    }
-
-    // ── Order Breakdown ──
-    function renderBreakdown() {
-      const el = document.getElementById('orderBreakdown');
-      const statuses = ['pending','confirmed','shipped','delivered','cancelled'];
-      const counts = statuses.map(s => ({ status: s, count: allOrders.filter(o => o.status === s).length }));
-      const total = allOrders.length || 1;
-
-      el.innerHTML = counts.map(c => {
-        const pct = Math.round((c.count / total) * 100);
-        const colors = { pending:'#FFC107', confirmed:'#6495ED', shipped:'#C9A96E', delivered:'#25D366', cancelled:'#E8505B' };
-        return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-          <span style="width:80px;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--color-text-muted);">${c.status}</span>
-          <div style="flex:1;height:8px;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;">
-            <div style="height:100%;width:${pct}%;background:${colors[c.status]};border-radius:4px;transition:width 0.5s ease;"></div>
-          </div>
-          <span style="width:50px;text-align:right;font-size:0.85rem;font-weight:600;color:var(--color-cream);">${c.count}</span>
-        </div>`;
-      }).join('');
-    }
-
-    // ── Filters ──
-    document.getElementById('statusFilters').addEventListener('click', (e) => {
-      const btn = e.target.closest('.filter-btn');
-      if (!btn) return;
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = btn.dataset.status;
-      renderOrders();
-    });
-
-    // ── Export CSV ──
-    document.getElementById('exportBtn').addEventListener('click', () => {
-      if (!allOrders.length) return;
-      const headers = ['Order ID','Customer','Phone','Email','Address','Payment','Subtotal','Shipping','Total','Status','Date'];
-      const rows = allOrders.map(o => [
-        o.order_id, o.customer_name, o.phone, o.email,
-        (o.shipping_address||'').replace(/,/g,';'), o.payment_method,
-        o.subtotal, o.shipping_cost, o.total, o.status,
-        o.created_at ? new Date(o.created_at).toLocaleDateString() : ''
-      ]);
-      const csv = [headers.join(','), ...rows.map(r => r.map(v => `"${v||''}"`).join(','))].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `hmy-orders-${new Date().toISOString().split('T')[0]}.csv`;
-      a.click();
-    });
-
-    // ── Modals close ──
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        document.getElementById('orderModal').classList.remove('open');
-        document.getElementById('deleteModal').classList.remove('open');
-      }
-    });
-    document.getElementById('orderModal').addEventListener('click', (e) => {
-      if (e.target.id === 'orderModal') e.target.classList.remove('open');
-    });
-    document.getElementById('deleteModal').addEventListener('click', (e) => {
-      if (e.target.id === 'deleteModal') e.target.classList.remove('open');
-    });
-
-    // ── Init ──
-    await fetchOrders();
-  });
-  </script>
+  <script src="../js/products.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>
