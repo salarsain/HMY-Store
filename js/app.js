@@ -317,7 +317,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="product-card">
         <a href="product.html?id=${p.id}" class="card-media img-zoom-container">
           ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
-          <img src="${p.images[0]}" alt="${p.title}" loading="lazy">
+          <img src="${p.images[0]}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#1a1510,#2a2218)'; this.parentElement.innerHTML += '<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;color:#C9A96E;font-size:2.5rem;font-family:Playfair Display,serif;letter-spacing:0.2em;\\'>HMY</div>';">
           <div class="card-actions">
             <button class="btn-primary btn-full add-to-bag-btn" data-id="${p.id}">
               <i class="fa-solid fa-bag-shopping"></i> ADD TO BAG
@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     categoryShowcase.innerHTML = categories.map(cat => `
       <a href="shop.html?cat=${cat.key}" class="category-showcase-item img-zoom-container">
-        <img src="${CATEGORY_IMAGES[cat.key]}" alt="${cat.title}" loading="lazy">
+        <img src="${CATEGORY_IMAGES[cat.key]}" alt="${cat.title}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#1a1510,#2a2218)';">
         <div class="category-showcase-overlay">
           <span class="category-showcase-label">${cat.label}</span>
           <h3 class="category-showcase-title">${cat.title}</h3>

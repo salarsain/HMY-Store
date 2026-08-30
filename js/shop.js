@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="product-card">
         <a href="product.html?id=${p.id}" class="card-media img-zoom-container">
           ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
-          <img src="${p.images[0]}" alt="${p.title}" loading="lazy">
+          <img src="${p.images[0]}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#1a1510,#2a2218)'; this.parentElement.innerHTML += '<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;color:#C9A96E;font-size:2.5rem;font-family:Playfair Display,serif;letter-spacing:0.2em;\\'>HMY</div>';">
           <div class="card-actions">
             <button class="btn-primary btn-full quick-add-btn" data-id="${p.id}">
               <i class="fa-solid fa-bag-shopping"></i> QUICK ADD
