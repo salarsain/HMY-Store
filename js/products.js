@@ -17,9 +17,9 @@ const PRODUCTS = [
     reviews: 128,
     badge: 'Bestseller',
     images: [
-      'https://images.unsplash.com/photo-1597983073493-88cd35cf93b0?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-kurta1/800/1000',
+      'https://picsum.photos/seed/hmy-kurta1b/800/1000',
+      'https://picsum.photos/seed/hmy-kurta1c/800/1000'
     ],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: [
@@ -45,8 +45,8 @@ const PRODUCTS = [
     reviews: 62,
     badge: 'Trending',
     images: [
-      'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-waist2/800/1000',
+      'https://picsum.photos/seed/hmy-waist2b/800/1000'
     ],
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
@@ -72,8 +72,8 @@ const PRODUCTS = [
     reviews: 89,
     badge: 'Premium',
     images: [
-      'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-plat3/800/1000',
+      'https://picsum.photos/seed/hmy-plat3b/800/1000'
     ],
     sizes: ['M', 'L', 'XL', 'XXL'],
     colors: [
@@ -101,8 +101,8 @@ const PRODUCTS = [
     reviews: 94,
     badge: 'Pure Cotton',
     images: [
-      'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-cott4/800/1000',
+      'https://picsum.photos/seed/hmy-cott4b/800/1000'
     ],
     sizes: ['4.5m', '5m'],
     colors: [
@@ -128,7 +128,7 @@ const PRODUCTS = [
     reviews: 76,
     badge: 'Summer',
     images: [
-      'https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-lawn5/800/1000'
     ],
     sizes: ['4.5m'],
     colors: [
@@ -155,8 +155,8 @@ const PRODUCTS = [
     reviews: 145,
     badge: 'New Arrival',
     images: [
-      'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-velv6/800/1000',
+      'https://picsum.photos/seed/hmy-velv6b/800/1000'
     ],
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
@@ -184,8 +184,8 @@ const PRODUCTS = [
     reviews: 210,
     badge: 'Festive Exclusive',
     images: [
-      'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-chif7/800/1000',
+      'https://picsum.photos/seed/hmy-chif7b/800/1000'
     ],
     sizes: ['Unstitched (3-Piece)'],
     colors: [
@@ -213,8 +213,8 @@ const PRODUCTS = [
     reviews: 310,
     badge: 'Signature',
     images: [
-      'https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-oud8/800/1000',
+      'https://picsum.photos/seed/hmy-oud8b/800/1000'
     ],
     sizes: ['50ml', '100ml'],
     colors: [],
@@ -236,8 +236,8 @@ const PRODUCTS = [
     reviews: 178,
     badge: 'Top Rated',
     images: [
-      'https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-amb9/800/1000',
+      'https://picsum.photos/seed/hmy-amb9b/800/1000'
     ],
     sizes: ['50ml', '100ml'],
     colors: [],
@@ -261,8 +261,8 @@ const PRODUCTS = [
     reviews: 86,
     badge: 'Handmade',
     images: [
-      'https://images.unsplash.com/photo-1584278860047-22db9ff82bed?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1509783236416-c9ad59bae472?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-topi10/800/1000',
+      'https://picsum.photos/seed/hmy-topi10b/800/1000'
     ],
     sizes: ['S (54cm)', 'M (56cm)', 'L (58cm)', 'XL (60cm)'],
     colors: [
@@ -287,7 +287,7 @@ const PRODUCTS = [
     reviews: 95,
     badge: 'Comfort Fit',
     images: [
-      'https://images.unsplash.com/photo-1509783236416-c9ad59bae472?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-turk11/800/1000'
     ],
     sizes: ['S (54cm)', 'M (56cm)', 'L (58cm)'],
     colors: [
@@ -315,8 +315,8 @@ const PRODUCTS = [
     reviews: 240,
     badge: 'Pure Non-Alcoholic',
     images: [
-      'https://images.unsplash.com/photo-1615397349754-cfa2066a298e?w=800&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-attar12/800/1000',
+      'https://picsum.photos/seed/hmy-attar12b/800/1000'
     ],
     sizes: ['6ml', '12ml'],
     colors: [],
@@ -338,7 +338,7 @@ const PRODUCTS = [
     reviews: 164,
     badge: 'Special Distillate',
     images: [
-      'https://images.unsplash.com/photo-1616949755610-8c9bbc08f138?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-musk13/800/1000'
     ],
     sizes: ['6ml', '12ml'],
     colors: [],
@@ -360,7 +360,7 @@ const PRODUCTS = [
     reviews: 112,
     badge: 'Cooling & Fresh',
     images: [
-      'https://images.unsplash.com/photo-1547887537-6158d64c35b3?w=800&auto=format&fit=crop&q=80'
+      'https://picsum.photos/seed/hmy-vetiv14/800/1000'
     ],
     sizes: ['6ml', '12ml'],
     colors: [],
@@ -429,11 +429,11 @@ const CATEGORY_LABELS = {
 
 // Category images for showcase
 const CATEGORY_IMAGES = {
-  'men-stitched':     'https://images.unsplash.com/photo-1597983073493-88cd35cf93b0?w=800&auto=format&fit=crop&q=80',
-  'men-unstitched':   'https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?w=800&auto=format&fit=crop&q=80',
-  'women-stitched':   'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=800&auto=format&fit=crop&q=80',
-  'women-unstitched': 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&auto=format&fit=crop&q=80',
-  'perfumes':         'https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=800&auto=format&fit=crop&q=80',
-  'islamic-topis':    'https://images.unsplash.com/photo-1584278860047-22db9ff82bed?w=800&auto=format&fit=crop&q=80',
-  'special-attar':    'https://images.unsplash.com/photo-1615397349754-cfa2066a298e?w=800&auto=format&fit=crop&q=80'
+  'men-stitched':     'https://picsum.photos/seed/hmy-cat-men/800/600',
+  'men-unstitched':   'https://picsum.photos/seed/hmy-cat-unstitch/800/600',
+  'women-stitched':   'https://picsum.photos/seed/hmy-cat-women/800/600',
+  'women-unstitched': 'https://picsum.photos/seed/hmy-cat-wunstitch/800/600',
+  'perfumes':         'https://picsum.photos/seed/hmy-cat-perfume/800/600',
+  'islamic-topis':    'https://picsum.photos/seed/hmy-cat-topis/800/600',
+  'special-attar':    'https://picsum.photos/seed/hmy-cat-attar/800/600'
 };
