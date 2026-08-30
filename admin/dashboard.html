@@ -158,7 +158,7 @@
             <i class="fa-solid fa-rotate-left"></i> Reset to Default
           </button>
         </div>
-        <p style="font-size:0.8rem;color:var(--color-text-muted);margin-bottom:16px;">Edit the 3 hero video panels on the landing page. Paste direct .mp4 video URLs.</p>
+        <p style="font-size:0.8rem;color:var(--color-text-muted);margin-bottom:16px;">Upload videos from your computer or paste URLs. Max ~50MB per video.</p>
         <div id="heroEditors"></div>
         <button class="cms-save-btn" id="saveHeroBtn"><i class="fa-solid fa-floppy-disk"></i> Save Hero Videos</button>
       </div>
@@ -173,8 +173,14 @@
         </div>
         <p style="font-size:0.8rem;color:var(--color-text-muted);margin-bottom:16px;">Edit the video and text in the "Our Story" section.</p>
         <div class="cms-field">
-          <label>Story Video URL (.mp4)</label>
-          <input type="text" id="storyVideoUrl" class="cms-input" placeholder="https://example.com/story-video.mp4">
+          <label>Story Video</label>
+          <div class="upload-zone" id="storyVideoZone" style="padding:16px;">
+            <i class="fa-solid fa-video" style="font-size:1.2rem;color:var(--color-gold);margin-bottom:6px;"></i>
+            <p style="font-size:0.8rem;color:var(--color-text-light);">Click to upload video from computer</p>
+            <input type="file" id="storyVideoFile" accept="video/*" style="display:none;">
+          </div>
+          <div id="storyVideoPreview" style="margin-top:8px;"></div>
+          <input type="text" id="storyVideoUrl" class="cms-input" placeholder="Or paste URL: https://example.com/story-video.mp4" style="margin-top:8px;">
         </div>
         <div class="cms-field">
           <label>Story Heading</label>

@@ -626,6 +626,51 @@ document.addEventListener('DOMContentLoaded', async () => {
     toast('Announcement bar reset to default');
   });
 
+  // ══════════════════════════════════════
+  // IndexedDB for Video Storage
+  // ══════════════════════════════════════
+  const DB_NAME = 'hmy_videos_db';
+  const DB_STORE = 'videos';
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => req.result.createObjectStore(DB_STORE);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function saveVideo(key, blob) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_STORE, 'readwrite');
+      tx.objectStore(DB_STORE).put(blob, key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
+  async function getVideo(key) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_STORE, 'readonly');
+      const req = tx.objectStore(DB_STORE).get(key);
+      req.onsuccess = () => resolve(req.result || null);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function deleteVideo(key) {
+    const db = await openDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(DB_STORE, 'readwrite');
+      tx.objectStore(DB_STORE).delete(key);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+
   // ── Hero Videos Editor ──
   function renderHeroEditor() {
     const content = getCurrentContent();
@@ -634,7 +679,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     container.innerHTML = content.hero.map((panel, i) => `
       <div class="cms-hero-panel">
         <h4 style="color:var(--color-gold);font-size:0.8rem;letter-spacing:0.1em;margin-bottom:12px;">PANEL ${i + 1}</h4>
-        <div class="cms-field"><label>Video URL (.mp4)</label><input type="text" class="cms-input hero-video" data-index="${i}" value="${panel.video || ''}"></div>
+        <div class="cms-field">
+          <label>Video</label>
+          <div class="upload-zone hero-video-upload" data-index="${i}" style="padding:14px;margin-bottom:8px;">
+            <i class="fa-solid fa-video" style="font-size:1rem;color:var(--color-gold);margin-bottom:4px;"></i>
+            <p style="font-size:0.8rem;color:var(--color-text-light);">Click to upload video</p>
+            <input type="file" class="hero-video-file" data-index="${i}" accept="video/*" style="display:none;">
+          </div>
+          <div class="hero-video-preview" id="heroVideoPreview${i}" style="margin-bottom:8px;"></div>
+          <input type="text" class="cms-input hero-video" data-index="${i}" value="${panel.video || ''}" placeholder="Or paste URL">
+        </div>
         <div class="cms-field"><label>Eyebrow Text</label><input type="text" class="cms-input hero-eyebrow" data-index="${i}" value="${panel.eyebrow || ''}"></div>
         <div class="cms-field"><label>Heading (use &lt;br&gt; for line break)</label><input type="text" class="cms-input hero-heading" data-index="${i}" value="${panel.heading || ''}"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -643,6 +697,41 @@ document.addEventListener('DOMContentLoaded', async () => {
         </div>
       </div>
     `).join('');
+
+    // Upload zone clicks
+    container.querySelectorAll('.hero-video-upload').forEach(zone => {
+      const i = zone.dataset.index;
+      const fileInput = zone.querySelector('.hero-video-file');
+      zone.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+        if (!file) return;
+        if (file.size > 50 * 1024 * 1024) { toast('Video too large (max 50MB)', 'error'); return; }
+        toast('Uploading video...');
+        await saveVideo('hero-video-' + i, file);
+        showHeroVideoPreview(i, file);
+        document.querySelector(`.hero-video[data-index="${i}"]`).value = `[UPLOADED: ${file.name}]`;
+        toast('Video uploaded for Panel ' + (parseInt(i)+1) + '!');
+      });
+    });
+
+    // Check for existing uploaded videos
+    [0,1,2].forEach(async (i) => {
+      const blob = await getVideo('hero-video-' + i);
+      if (blob) showHeroVideoPreview(i, blob);
+    });
+  }
+
+  function showHeroVideoPreview(index, blob) {
+    const container = document.getElementById('heroVideoPreview' + index);
+    if (!container) return;
+    const url = URL.createObjectURL(blob);
+    container.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid rgba(255,255,255,0.08);">
+        <video src="${url}" style="width:80px;height:50px;object-fit:cover;border-radius:4px;" muted></video>
+        <span style="font-size:0.75rem;color:var(--color-gold);flex:1;"><i class="fa-solid fa-check-circle"></i> Video uploaded</span>
+        <button type="button" class="cms-remove-btn" onclick="this.closest('.cms-field').querySelector('.hero-video').value='';this.parentElement.remove();" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+      </div>`;
   }
 
   document.getElementById('saveHeroBtn').addEventListener('click', () => {
@@ -658,10 +747,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     toast('Hero videos saved!');
   });
 
-  document.getElementById('resetHeroBtn').addEventListener('click', () => {
+  document.getElementById('resetHeroBtn').addEventListener('click', async () => {
     const content = getCurrentContent();
     content.hero = DEFAULT_HERO.map(h => ({...h}));
     saveSiteContent(content);
+    // Remove uploaded videos
+    for (let i = 0; i < 3; i++) await deleteVideo('hero-video-' + i);
     renderHeroEditor();
     toast('Hero videos reset to default');
   });
@@ -672,6 +763,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('storyVideoUrl').value = content.story.video || '';
     document.getElementById('storyHeading').value = content.story.heading || '';
     document.getElementById('storyText').value = content.story.text || '';
+
+    // Check for existing uploaded story video
+    getVideo('story-video').then(blob => {
+      if (blob) showStoryVideoPreview(blob);
+    });
+  }
+
+  // Story video upload
+  const storyVideoZone = document.getElementById('storyVideoZone');
+  const storyVideoFile = document.getElementById('storyVideoFile');
+  storyVideoZone.addEventListener('click', () => storyVideoFile.click());
+  storyVideoFile.addEventListener('change', async () => {
+    const file = storyVideoFile.files[0];
+    if (!file) return;
+    if (file.size > 50 * 1024 * 1024) { toast('Video too large (max 50MB)', 'error'); return; }
+    toast('Uploading story video...');
+    await saveVideo('story-video', file);
+    showStoryVideoPreview(file);
+    document.getElementById('storyVideoUrl').value = `[UPLOADED: ${file.name}]`;
+    toast('Story video uploaded!');
+  });
+
+  function showStoryVideoPreview(blob) {
+    const container = document.getElementById('storyVideoPreview');
+    if (!container) return;
+    const url = URL.createObjectURL(blob);
+    container.innerHTML = `
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid rgba(255,255,255,0.08);">
+        <video src="${url}" style="width:80px;height:50px;object-fit:cover;border-radius:4px;" muted></video>
+        <span style="font-size:0.75rem;color:var(--color-gold);flex:1;"><i class="fa-solid fa-check-circle"></i> Video uploaded</span>
+        <button type="button" class="cms-remove-btn" onclick="document.getElementById('storyVideoUrl').value='';this.parentElement.remove();" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+      </div>`;
   }
 
   document.getElementById('saveStoryBtn').addEventListener('click', () => {
@@ -685,10 +808,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     toast('Story section saved!');
   });
 
-  document.getElementById('resetStoryBtn').addEventListener('click', () => {
+  document.getElementById('resetStoryBtn').addEventListener('click', async () => {
     const content = getCurrentContent();
     content.story = {...DEFAULT_STORY};
     saveSiteContent(content);
+    await deleteVideo('story-video');
     renderStoryEditor();
     toast('Story section reset to default');
   });
