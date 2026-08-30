@@ -314,3 +314,80 @@ ul, ol {
   h2 { font-size: var(--text-2xl); }
   h3 { font-size: var(--text-xl); }
 }
+
+/* ---- Light Theme (V1 Inspired Palette) ---- */
+[data-theme="light"] {
+  --color-black:        #FFFFFF;
+  --color-black-soft:   #F7F7F8;
+  --color-black-card:   #FFFFFF;
+  --color-black-hover:  #EEEEEE;
+
+  --color-cream:        #141414;
+  --color-champagne:    #2B2B2B;
+  --color-ivory:        #1A1A1A;
+
+  --color-text-light:   #4F4F4F;
+  --color-text-muted:   #7A7A7A;
+  --color-text-dark:    #F7F5F2;
+  --color-border:       rgba(201, 169, 110, 0.4);
+  --color-border-light: rgba(0, 0, 0, 0.1);
+
+  --overlay-dark:       rgba(255, 255, 255, 0.7);
+  --overlay-medium:     rgba(255, 255, 255, 0.45);
+
+  --glass-bg:           rgba(255, 255, 255, 0.94);
+  --glass-blur:         20px;
+  --glass-border:       rgba(0, 0, 0, 0.08);
+
+  --shadow-sm:          0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md:          0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-lg:          0 10px 30px rgba(0, 0, 0, 0.12);
+  --shadow-glow-gold:   0 0 25px rgba(201, 169, 110, 0.25);
+}
+
+[data-theme="light"] body {
+  background-color: #FFFFFF;
+  color: #141414;
+}
+
+[data-theme="light"] .announcement-bar {
+  background: linear-gradient(90deg, #F3E7D7, #EEDCC4);
+  color: #111111;
+}
+
+[data-theme="light"] .site-header--solid {
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .mega-menu {
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+[data-theme="light"] .cart-drawer {
+  background: #FFFFFF;
+  border-left: 1px solid rgba(0,0,0,0.1);
+}
+
+[data-theme="light"] .product-card {
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+[data-theme="light"] .product-card:hover {
+  border-color: var(--color-gold);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .site-footer {
+  background: #F8F8F9;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] .theme-toggle-btn {
+  color: #111111;
+}
+

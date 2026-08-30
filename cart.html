@@ -16,6 +16,15 @@
 </head>
 <body>
 
+  <!-- ═══════ SPLASH / LOADING SCREEN ═══════ -->
+  <div class="splash-screen" id="splashScreen">
+    <div class="splash-logo">HMY</div>
+    <div class="splash-tagline">Luxury Eastern Fashion & Royal Fragrances</div>
+    <div class="splash-loader">
+      <div class="splash-loader-bar" id="splashLoaderBar"></div>
+    </div>
+  </div>
+
   <!-- Announcement -->
   <div class="announcement-bar" id="announcementBar">
     <div class="marquee-track">
@@ -40,6 +49,9 @@
       <div class="header-nav header-nav-right">
         <a href="index.html#story" class="nav-link">OUR STORY</a>
         <div class="header-actions">
+          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme" title="Switch Theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
           <button class="btn-icon cart-btn" aria-label="Cart" style="pointer-events:none;">
             <i class="fa-solid fa-bag-shopping"></i><span class="cart-count" data-cart-count>0</span>
           </button>

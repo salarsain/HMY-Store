@@ -137,7 +137,28 @@
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+}
+
+.theme-toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-cream);
+  font-size: 1rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.theme-toggle-btn:hover {
+  color: var(--color-gold);
+  background: rgba(201, 169, 110, 0.1);
+  transform: scale(1.08);
 }
 
 .cart-btn {

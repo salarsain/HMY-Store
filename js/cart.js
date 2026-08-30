@@ -196,7 +196,97 @@ const Cart = {
   }
 };
 
-// Initialize cart UI on page load
+// ==========================================================================
+// Theme Manager (Dark by Default, Light V1 Inspired)
+// ==========================================================================
+const ThemeManager = {
+  KEY: 'hmy_theme_v2',
+
+  init() {
+    const saved = localStorage.getItem(this.KEY) || 'dark';
+    this.apply(saved);
+
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('#themeToggleBtn') || e.target.closest('.theme-toggle-btn');
+      if (btn) {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        this.apply(next);
+      }
+    });
+  },
+
+  apply(theme) {
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    localStorage.setItem(this.KEY, theme);
+
+    // Update icons
+    document.querySelectorAll('#themeToggleBtn i, .theme-toggle-btn i').forEach(icon => {
+      if (theme === 'light') {
+        icon.className = 'fa-solid fa-sun';
+      } else {
+        icon.className = 'fa-solid fa-moon';
+      }
+    });
+  }
+};
+
+// Apply saved theme immediately to prevent flashing
+(() => {
+  const saved = localStorage.getItem('hmy_theme_v2') || 'dark';
+  if (saved === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+  }
+})();
+
+// ==========================================================================
+// Splash / Loading Screen Manager
+// ==========================================================================
+const SplashManager = {
+  init() {
+    const splash = document.getElementById('splashScreen');
+    if (!splash) return;
+
+    const bar = document.getElementById('splashLoaderBar');
+    let progress = 10;
+    const interval = setInterval(() => {
+      progress += Math.random() * 25;
+      if (progress > 90) progress = 90;
+      if (bar) bar.style.width = `${progress}%`;
+    }, 120);
+
+    const finish = () => {
+      clearInterval(interval);
+      if (bar) bar.style.width = '100%';
+      setTimeout(() => {
+        splash.classList.add('fade-out');
+        setTimeout(() => {
+          splash.style.display = 'none';
+        }, 800);
+      }, 350);
+    };
+
+    if (document.readyState === 'complete') {
+      setTimeout(finish, 800);
+    } else {
+      window.addEventListener('load', () => {
+        setTimeout(finish, 800);
+      });
+    }
+
+    // Safety fallback (maximum 3.5s splash)
+    setTimeout(finish, 3500);
+  }
+};
+
+// Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
   Cart.updateUI();
+  ThemeManager.init();
+  SplashManager.init();
 });
+
