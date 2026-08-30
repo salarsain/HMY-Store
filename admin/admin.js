@@ -363,11 +363,88 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  // ── Image Upload State ──
+  let uploadedImages = []; // Array of base64 data URLs or regular URLs
+
+  function renderUploadPreview() {
+    const container = document.getElementById('uploadPreview');
+    container.innerHTML = uploadedImages.map((src, i) => `
+      <div class="upload-preview-item">
+        <img src="${src}" alt="Image ${i+1}">
+        <button type="button" class="remove-img" data-index="${i}"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.remove-img').forEach(btn => {
+      btn.addEventListener('click', () => {
+        uploadedImages.splice(parseInt(btn.dataset.index), 1);
+        renderUploadPreview();
+      });
+    });
+  }
+
+  // Compress and convert image to base64
+  function compressImage(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX = 800; // max width/height
+          let w = img.width, h = img.height;
+          if (w > MAX || h > MAX) {
+            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+            else { w = Math.round(w * MAX / h); h = MAX; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Upload zone events
+  const uploadZone = document.getElementById('uploadZone');
+  const fileInput = document.getElementById('pf_imageUpload');
+
+  uploadZone.addEventListener('click', () => fileInput.click());
+  uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+  uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+  uploadZone.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    uploadZone.classList.remove('drag-over');
+    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+    for (const file of files) {
+      if (file.size > 2 * 1024 * 1024) { toast('Image too large (max 2MB): ' + file.name, 'error'); continue; }
+      const base64 = await compressImage(file);
+      uploadedImages.push(base64);
+    }
+    renderUploadPreview();
+  });
+
+  fileInput.addEventListener('change', async () => {
+    const files = Array.from(fileInput.files);
+    for (const file of files) {
+      if (file.size > 2 * 1024 * 1024) { toast('Image too large (max 2MB): ' + file.name, 'error'); continue; }
+      const base64 = await compressImage(file);
+      uploadedImages.push(base64);
+    }
+    fileInput.value = '';
+    renderUploadPreview();
+  });
+
   // Product Form
   function openProductForm(editId = null) {
     const modal = document.getElementById('productModal');
     const title = document.getElementById('productFormTitle');
     const form = document.getElementById('productForm');
+
+    uploadedImages = []; // Reset
 
     if (editId) {
       const p = getAllProducts().find(x => x.id === editId);
@@ -380,7 +457,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('pf_price').value = p.price;
       document.getElementById('pf_originalPrice').value = p.originalPrice || '';
       document.getElementById('pf_description').value = p.description || '';
-      document.getElementById('pf_images').value = (p.images || []).join('\n');
+      uploadedImages = [...(p.images || [])]; // Load existing images
       document.getElementById('pf_sizes').value = (p.sizes || []).join(', ');
       document.getElementById('pf_colors').value = (p.colors || []).map(c => `${c.name}:${c.hex}`).join(', ');
       document.getElementById('pf_fabric').value = p.fabric || '';
@@ -394,6 +471,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('pf_inStock').checked = true;
     }
 
+    renderUploadPreview();
     modal.classList.add('open');
   }
 
@@ -422,7 +500,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       rating: 4.5,
       reviews: 0,
       badge: document.getElementById('pf_badge').value || '',
-      images: document.getElementById('pf_images').value.split('\n').map(u => u.trim()).filter(Boolean),
+      images: [...uploadedImages],
       sizes: document.getElementById('pf_sizes').value.split(',').map(s => s.trim()).filter(Boolean),
       colors: colors,
       description: document.getElementById('pf_description').value || '',

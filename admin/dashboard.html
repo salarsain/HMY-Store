@@ -254,7 +254,17 @@
           <div class="cms-field"><label>Original Price (Rs.)</label><input type="number" id="pf_originalPrice" class="cms-input"></div>
         </div>
         <div class="cms-field"><label>Description</label><textarea id="pf_description" class="cms-input" rows="3"></textarea></div>
-        <div class="cms-field"><label>Image URLs (one per line)</label><textarea id="pf_images" class="cms-input" rows="3" placeholder="https://example.com/image1.jpg&#10;https://example.com/image2.jpg"></textarea></div>
+        <div class="cms-field">
+          <label>Product Images</label>
+          <div class="upload-zone" id="uploadZone">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:1.5rem;color:var(--color-gold);margin-bottom:8px;"></i>
+            <p style="font-size:0.85rem;color:var(--color-text-light);margin-bottom:4px;">Click to upload or drag & drop</p>
+            <p style="font-size:0.7rem;color:var(--color-text-muted);">JPG, PNG, WEBP — Max 2MB each</p>
+            <input type="file" id="pf_imageUpload" accept="image/*" multiple style="display:none;">
+          </div>
+          <div class="upload-preview" id="uploadPreview"></div>
+          <input type="hidden" id="pf_images">
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="cms-field"><label>Sizes (comma-separated)</label><input type="text" id="pf_sizes" class="cms-input" placeholder="S, M, L, XL"></div>
           <div class="cms-field"><label>Colors (name:hex, comma-sep)</label><input type="text" id="pf_colors" class="cms-input" placeholder="Black:#1A1A1A, Navy:#1B2A4A"></div>
