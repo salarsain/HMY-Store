@@ -349,12 +349,24 @@ const TryOn = {
       // Convert to JPEG to strip alpha channel
       garmentBlob = await this.blobToJpeg(garmentBlob);
 
+      // Smart model selection based on cloth type
+      // IDM-VTON only supports upper body, CatVTON supports upper/lower/overall
+      let modelsToTry;
+      if (clothType === 'upper') {
+        // For upper body: IDM-VTON is best, CatVTON as fallback
+        modelsToTry = this.MODELS;
+      } else {
+        // For lower/overall: CatVTON first (supports cloth_type), IDM-VTON won't help
+        modelsToTry = [...this.MODELS].reverse();
+        console.log(`[TryOn] Using CatVTON first for cloth type: ${clothType}`);
+      }
+
       // Try each model in order until one works
       let prediction = null;
       let lastError = null;
       let usedModel = null;
 
-      for (const model of this.MODELS) {
+      for (const model of modelsToTry) {
         try {
           document.getElementById('progressText').textContent = `Connecting to ${model.name}...`;
           console.log(`[TryOn] Trying model: ${model.name} (${model.space})`);
