@@ -1,25 +1,25 @@
-// ==========================================================================
-// HMY Store V2 — Product Catalog (Enhanced)
+﻿// ==========================================================================
+// HMY Store V2 â€” Product Catalog (Enhanced)
 // Includes sizes, colors, multiple images, detailed info
 // ==========================================================================
 
 const PRODUCTS = [
-  // ═══════════════ MEN — STITCHED ═══════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MEN â€” STITCHED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   {
     id: 1,
     title: 'HMY Royal Embroidered Kurta Set',
     slug: 'royal-embroidered-kurta-set',
     category: 'men-stitched',
-    categoryLabel: 'Men — Stitched',
+    categoryLabel: 'Men â€” Stitched',
     price: 6500,
     originalPrice: 8500,
     rating: 4.9,
     reviews: 128,
     badge: 'Bestseller',
     images: [
-      'https://picsum.photos/seed/hmy-kurta1/800/1000',
-      'https://picsum.photos/seed/hmy-kurta1b/800/1000',
-      'https://picsum.photos/seed/hmy-kurta1c/800/1000'
+      'https://placehold.co/800x1000/1A1A1A/C9A96E?text=Royal+Kurta&font=playfair-display',
+      'https://placehold.co/800x1000/1B2A4A/C9A96E?text=Royal+Kurta+2&font=playfair-display',
+      'https://placehold.co/800x1000/4A5530/C9A96E?text=Royal+Kurta+3&font=playfair-display'
     ],
     sizes: ['S', 'M', 'L', 'XL', 'XXL'],
     colors: [
@@ -38,15 +38,15 @@ const PRODUCTS = [
     title: 'HMY Classic Silk Waistcoat',
     slug: 'classic-silk-waistcoat',
     category: 'men-stitched',
-    categoryLabel: 'Men — Stitched',
+    categoryLabel: 'Men â€” Stitched',
     price: 4200,
     originalPrice: 5500,
     rating: 4.7,
     reviews: 62,
     badge: 'Trending',
     images: [
-      'https://picsum.photos/seed/hmy-waist2/800/1000',
-      'https://picsum.photos/seed/hmy-waist2b/800/1000'
+      'https://placehold.co/800x1000/6B1D2A/C9A96E?text=Silk+Waistcoat&font=playfair-display',
+      'https://placehold.co/800x1000/1A1A1A/C9A96E?text=Silk+Waistcoat+2&font=playfair-display'
     ],
     sizes: ['S', 'M', 'L', 'XL'],
     colors: [
@@ -65,15 +65,15 @@ const PRODUCTS = [
     title: 'HMY Platinum Shalwar Kameez',
     slug: 'platinum-shalwar-kameez',
     category: 'men-stitched',
-    categoryLabel: 'Men — Stitched',
+    categoryLabel: 'Men â€” Stitched',
     price: 5800,
     originalPrice: 7200,
     rating: 4.8,
     reviews: 89,
     badge: 'Premium',
     images: [
-      'https://picsum.photos/seed/hmy-plat3/800/1000',
-      'https://picsum.photos/seed/hmy-plat3b/800/1000'
+      'https://placehold.co/800x1000/F5F0E8/1A1A1A?text=Shalwar+Kameez&font=playfair-display',
+      'https://placehold.co/800x1000/87CEEB/1A1A1A?text=Shalwar+Kameez+2&font=playfair-display'
     ],
     sizes: ['M', 'L', 'XL', 'XXL'],
     colors: [
@@ -88,21 +88,21 @@ const PRODUCTS = [
     featured: true
   },
 
-  // ═══════════════ MEN — UNSTITCHED ═══════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MEN â€” UNSTITCHED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   {
     id: 4,
     title: 'HMY Premium Egyptian Cotton (4.5m)',
     slug: 'premium-egyptian-cotton',
     category: 'men-unstitched',
-    categoryLabel: 'Men — Unstitched',
+    categoryLabel: 'Men â€” Unstitched',
     price: 4800,
     originalPrice: 6500,
     rating: 4.8,
     reviews: 94,
     badge: 'Pure Cotton',
     images: [
-      'https://picsum.photos/seed/hmy-cott4/800/1000',
-      'https://picsum.photos/seed/hmy-cott4b/800/1000'
+      'https://placehold.co/800x1000/F5F0E8/3C3C3C?text=Egyptian+Cotton&font=playfair-display',
+      'https://placehold.co/800x1000/B0ADA8/1A1A1A?text=Egyptian+Cotton+2&font=playfair-display'
     ],
     sizes: ['4.5m', '5m'],
     colors: [
@@ -111,7 +111,7 @@ const PRODUCTS = [
       { name: 'Charcoal', hex: '#3C3C3C' }
     ],
     description: 'Unstitched ultra-soft Egyptian long-staple cotton with a silky luster finish. Ideal for all seasons.',
-    fabric: '100% Egyptian Long-Staple Cotton (60s count) — Premium Giza Quality',
+    fabric: '100% Egyptian Long-Staple Cotton (60s count) â€” Premium Giza Quality',
     care: 'Machine washable. Iron on medium heat. Recommended: professional stitching.',
     inStock: true,
     featured: true
@@ -121,42 +121,42 @@ const PRODUCTS = [
     title: 'HMY Luxury Lawn 3-Piece (4.5m)',
     slug: 'luxury-lawn-3piece',
     category: 'men-unstitched',
-    categoryLabel: 'Men — Unstitched',
+    categoryLabel: 'Men â€” Unstitched',
     price: 3200,
     originalPrice: 4500,
     rating: 4.6,
     reviews: 76,
     badge: 'Summer',
     images: [
-      'https://picsum.photos/seed/hmy-lawn5/800/1000'
+      'https://placehold.co/800x1000/D4BC8A/1A1A1A?text=Luxury+Lawn&font=playfair-display'
     ],
     sizes: ['4.5m'],
     colors: [
       { name: 'White', hex: '#FFFFFF' },
       { name: 'Beige', hex: '#D4BC8A' }
     ],
-    description: 'Premium lawn fabric — breathable, lightweight, and perfect for summer. Comes with matching shalwar piece.',
-    fabric: 'Premium Swiss Lawn — 100% Cotton',
+    description: 'Premium lawn fabric â€” breathable, lightweight, and perfect for summer. Comes with matching shalwar piece.',
+    fabric: 'Premium Swiss Lawn â€” 100% Cotton',
     care: 'Machine washable cold. Hang dry. Iron medium heat.',
     inStock: true,
     featured: false
   },
 
-  // ═══════════════ WOMEN — STITCHED ═══════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WOMEN â€” STITCHED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   {
     id: 6,
     title: 'HMY Pret Velvet Kurti',
     slug: 'pret-velvet-kurti',
     category: 'women-stitched',
-    categoryLabel: 'Women — Stitched',
+    categoryLabel: 'Women â€” Stitched',
     price: 7500,
     originalPrice: 9900,
     rating: 4.9,
     reviews: 145,
     badge: 'New Arrival',
     images: [
-      'https://picsum.photos/seed/hmy-velv6/800/1000',
-      'https://picsum.photos/seed/hmy-velv6b/800/1000'
+      'https://placehold.co/800x1000/6B1D2A/C9A96E?text=Velvet+Kurti&font=playfair-display',
+      'https://placehold.co/800x1000/2E5A45/C9A96E?text=Velvet+Kurti+2&font=playfair-display'
     ],
     sizes: ['XS', 'S', 'M', 'L'],
     colors: [
@@ -171,21 +171,21 @@ const PRODUCTS = [
     featured: true
   },
 
-  // ═══════════════ WOMEN — UNSTITCHED ═══════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WOMEN â€” UNSTITCHED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   {
     id: 7,
     title: 'HMY Luxury Chiffon Embroidered 3-Piece',
     slug: 'luxury-chiffon-3piece',
     category: 'women-unstitched',
-    categoryLabel: 'Women — Unstitched',
+    categoryLabel: 'Women â€” Unstitched',
     price: 9500,
     originalPrice: 13000,
     rating: 5.0,
     reviews: 210,
     badge: 'Festive Exclusive',
     images: [
-      'https://picsum.photos/seed/hmy-chif7/800/1000',
-      'https://picsum.photos/seed/hmy-chif7b/800/1000'
+      'https://placehold.co/800x1000/D4848A/1A1A1A?text=Chiffon+3-Piece&font=playfair-display',
+      'https://placehold.co/800x1000/FFDAB9/1A1A1A?text=Chiffon+3-Piece+2&font=playfair-display'
     ],
     sizes: ['Unstitched (3-Piece)'],
     colors: [
@@ -200,7 +200,7 @@ const PRODUCTS = [
     featured: true
   },
 
-  // ═══════════════ PERFUMES ═══════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PERFUMES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   {
     id: 8,
     title: 'HMY Royal Oud Eau de Parfum (100ml)',
@@ -213,8 +213,8 @@ const PRODUCTS = [
     reviews: 310,
     badge: 'Signature',
     images: [
-      'https://picsum.photos/seed/hmy-oud8/800/1000',
-      'https://picsum.photos/seed/hmy-oud8b/800/1000'
+      'https://placehold.co/800x1000/1A1A1A/C9A96E?text=Royal+Oud+EDP&font=playfair-display',
+      'https://placehold.co/800x1000/2A1A0A/C9A96E?text=Royal+Oud+2&font=playfair-display'
     ],
     sizes: ['50ml', '100ml'],
     colors: [],
@@ -236,8 +236,8 @@ const PRODUCTS = [
     reviews: 178,
     badge: 'Top Rated',
     images: [
-      'https://picsum.photos/seed/hmy-amb9/800/1000',
-      'https://picsum.photos/seed/hmy-amb9b/800/1000'
+      'https://placehold.co/800x1000/3C2A1A/C9A96E?text=Velvet+Amber&font=playfair-display',
+      'https://placehold.co/800x1000/2A1A0A/C9A96E?text=Velvet+Amber+2&font=playfair-display'
     ],
     sizes: ['50ml', '100ml'],
     colors: [],
@@ -248,7 +248,7 @@ const PRODUCTS = [
     featured: false
   },
 
-  // ═══════════════ ISLAMIC TOPIS ═══════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ISLAMIC TOPIS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   {
     id: 10,
     title: 'HMY Handcrafted Omani Royal Topi',
@@ -261,8 +261,8 @@ const PRODUCTS = [
     reviews: 86,
     badge: 'Handmade',
     images: [
-      'https://picsum.photos/seed/hmy-topi10/800/1000',
-      'https://picsum.photos/seed/hmy-topi10b/800/1000'
+      'https://placehold.co/800x1000/F5F0E8/1A1A1A?text=Omani+Topi&font=playfair-display',
+      'https://placehold.co/800x1000/1A1A1A/C9A96E?text=Omani+Topi+2&font=playfair-display'
     ],
     sizes: ['S (54cm)', 'M (56cm)', 'L (58cm)', 'XL (60cm)'],
     colors: [
@@ -287,7 +287,7 @@ const PRODUCTS = [
     reviews: 95,
     badge: 'Comfort Fit',
     images: [
-      'https://picsum.photos/seed/hmy-turk11/800/1000'
+      'https://placehold.co/800x1000/6B1D2A/C9A96E?text=Turkish+Cap&font=playfair-display'
     ],
     sizes: ['S (54cm)', 'M (56cm)', 'L (58cm)'],
     colors: [
@@ -302,7 +302,7 @@ const PRODUCTS = [
     featured: false
   },
 
-  // ═══════════════ SPECIAL ATTAR ═══════════════
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SPECIAL ATTAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
   {
     id: 12,
     title: 'HMY Special Dehn Al Oud Royale (12ml)',
@@ -315,8 +315,8 @@ const PRODUCTS = [
     reviews: 240,
     badge: 'Pure Non-Alcoholic',
     images: [
-      'https://picsum.photos/seed/hmy-attar12/800/1000',
-      'https://picsum.photos/seed/hmy-attar12b/800/1000'
+      'https://placehold.co/800x1000/2A1A0A/C9A96E?text=Dehn+Al+Oud&font=playfair-display',
+      'https://placehold.co/800x1000/1A1A1A/C9A96E?text=Dehn+Al+Oud+2&font=playfair-display'
     ],
     sizes: ['6ml', '12ml'],
     colors: [],
@@ -338,7 +338,7 @@ const PRODUCTS = [
     reviews: 164,
     badge: 'Special Distillate',
     images: [
-      'https://picsum.photos/seed/hmy-musk13/800/1000'
+      'https://placehold.co/800x1000/1A1A1A/C9A96E?text=Kasturi+Musk&font=playfair-display'
     ],
     sizes: ['6ml', '12ml'],
     colors: [],
@@ -360,7 +360,7 @@ const PRODUCTS = [
     reviews: 112,
     badge: 'Cooling & Fresh',
     images: [
-      'https://picsum.photos/seed/hmy-vetiv14/800/1000'
+      'https://placehold.co/800x1000/2E5A45/C9A96E?text=Ruh+Khus&font=playfair-display'
     ],
     sizes: ['6ml', '12ml'],
     colors: [],
@@ -371,9 +371,9 @@ const PRODUCTS = [
     featured: false
   }
 ];
-// ══════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // Helper: Get active product list (localStorage override or defaults)
-// ══════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function _getActiveProducts() {
   try {
     const custom = localStorage.getItem('hmy_products_custom');
@@ -422,17 +422,17 @@ function sortProducts(products, sortBy) {
     case 'price-high': return sorted.sort((a, b) => b.price - a.price);
     case 'rating':     return sorted.sort((a, b) => b.rating - a.rating);
     case 'newest':     return sorted.sort((a, b) => b.id - a.id);
-    default:           return sorted; // 'featured' — original order
+    default:           return sorted; // 'featured' â€” original order
   }
 }
 
 // Category labels map
 const CATEGORY_LABELS = {
   'all':              'All Products',
-  'men-stitched':     'Men — Stitched',
-  'men-unstitched':   'Men — Unstitched',
-  'women-stitched':   'Women — Stitched',
-  'women-unstitched': 'Women — Unstitched',
+  'men-stitched':     'Men â€” Stitched',
+  'men-unstitched':   'Men â€” Unstitched',
+  'women-stitched':   'Women â€” Stitched',
+  'women-unstitched': 'Women â€” Unstitched',
   'perfumes':         'Perfumes',
   'islamic-topis':    'Islamic Topis',
   'special-attar':    'Special Attar'
@@ -440,11 +440,12 @@ const CATEGORY_LABELS = {
 
 // Category images for showcase
 const CATEGORY_IMAGES = {
-  'men-stitched':     'https://picsum.photos/seed/hmy-cat-men/800/600',
-  'men-unstitched':   'https://picsum.photos/seed/hmy-cat-unstitch/800/600',
-  'women-stitched':   'https://picsum.photos/seed/hmy-cat-women/800/600',
-  'women-unstitched': 'https://picsum.photos/seed/hmy-cat-wunstitch/800/600',
-  'perfumes':         'https://picsum.photos/seed/hmy-cat-perfume/800/600',
-  'islamic-topis':    'https://picsum.photos/seed/hmy-cat-topis/800/600',
-  'special-attar':    'https://picsum.photos/seed/hmy-cat-attar/800/600'
+  'men-stitched':     'https://placehold.co/800x600/1A1A1A/C9A96E?text=Men+Stitched&font=playfair-display',
+  'men-unstitched':   'https://placehold.co/800x600/1B2A4A/C9A96E?text=Men+Unstitched&font=playfair-display',
+  'women-stitched':   'https://placehold.co/800x600/6B1D2A/C9A96E?text=Women+Stitched&font=playfair-display',
+  'women-unstitched': 'https://placehold.co/800x600/D4848A/1A1A1A?text=Women+Unstitched&font=playfair-display',
+  'perfumes':         'https://placehold.co/800x600/2A1A0A/C9A96E?text=Perfumes&font=playfair-display',
+  'islamic-topis':    'https://placehold.co/800x600/F5F0E8/1A1A1A?text=Islamic+Topis&font=playfair-display',
+  'special-attar':    'https://placehold.co/800x600/1A1A1A/C9A96E?text=Special+Attar&font=playfair-display'
 };
+
