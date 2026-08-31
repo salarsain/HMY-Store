@@ -1,10 +1,14 @@
 // ==========================================================================
 // HMY Store — Virtual Try-On Logic (tryon.js)
-// Uses CatVTON via Gradio JS Client for AI-powered virtual try-on
+// Uses IDM-VTON (primary) + CatVTON (fallback) via Gradio JS Client
 // ==========================================================================
 
 const TryOn = {
-  SPACE_URL: 'zhengchong/CatVTON',
+  // Models in priority order
+  MODELS: [
+    { name: 'IDM-VTON', space: 'yisol/IDM-VTON', endpoint: '/tryon' },
+    { name: 'CatVTON', space: 'zhengchong/CatVTON', endpoint: '/submit_function' }
+  ],
   
   // State
   personImage: null,     // File/Blob
@@ -299,12 +303,6 @@ const TryOn = {
       if (!Client) {
         throw new Error('Could not load Gradio Client library');
       }
-      
-      document.getElementById('progressText').textContent = 'Connecting to AI model...';
-      
-      const app = await Client.connect(this.SPACE_URL);
-      
-      document.getElementById('progressText').textContent = 'Uploading images...';
 
       // Prepare person image as blob
       let personBlob = this.personImage;
@@ -320,25 +318,65 @@ const TryOn = {
         garmentBlob = await resp.blob();
       }
 
-      document.getElementById('progressText').textContent = 'AI is generating your try-on... (30-90 seconds)';
+      // Try each model in order until one works
+      let prediction = null;
+      let lastError = null;
+      let usedModel = null;
 
-      // Call CatVTON API — endpoint is /submit_function
-      // Params: person_image (ImageEditor), garment_image, cloth_type, steps, cfg, seed
-      const prediction = await app.predict('/submit_function', [
-        { background: personBlob, layers: [], composite: null },  // Person image (ImageEditor format)
-        garmentBlob,       // Garment image
-        clothType,         // Cloth type: upper/lower/overall
-        50,                // Inference steps
-        2.5,               // CFG
-        42                 // Seed
-      ]);
+      for (const model of this.MODELS) {
+        try {
+          document.getElementById('progressText').textContent = `Connecting to ${model.name}...`;
+          console.log(`[TryOn] Trying model: ${model.name} (${model.space})`);
+          
+          const app = await Client.connect(model.space);
+          
+          document.getElementById('progressText').textContent = `${model.name}: Uploading images...`;
 
-      // Get result
+          let args;
+          if (model.name === 'IDM-VTON') {
+            // IDM-VTON params: person(ImageEditor), garment, description, auto_mask, crop, steps, seed
+            args = [
+              { background: personBlob, layers: [], composite: null },
+              garmentBlob,
+              'A garment',   // garment description
+              true,          // auto mask
+              false,         // crop
+              30,            // denoise steps
+              42             // seed
+            ];
+          } else {
+            // CatVTON params: person(ImageEditor), garment, cloth_type, steps, cfg, seed
+            args = [
+              { background: personBlob, layers: [], composite: null },
+              garmentBlob,
+              clothType,
+              50,
+              2.5,
+              42
+            ];
+          }
+
+          document.getElementById('progressText').textContent = `${model.name}: Generating try-on... (30-90 seconds)`;
+
+          prediction = await app.predict(model.endpoint, args);
+          usedModel = model.name;
+          break; // Success!
+
+        } catch (modelErr) {
+          console.warn(`[TryOn] ${model.name} failed:`, modelErr.message);
+          lastError = modelErr;
+          continue; // Try next model
+        }
+      }
+
+      // Check result
       if (prediction && prediction.data && prediction.data[0]) {
-        const resultUrl = prediction.data[0].url || prediction.data[0];
+        const resultData = prediction.data[0];
+        const resultUrl = resultData.url || resultData;
+        console.log(`[TryOn] Success with ${usedModel}!`);
         this.showResult(resultUrl);
       } else {
-        throw new Error('No result returned from AI model');
+        throw lastError || new Error('All AI models failed');
       }
 
     } catch (error) {
