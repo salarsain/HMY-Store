@@ -111,6 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
           <i class="fa-brands fa-whatsapp"></i> BUY NOW VIA WHATSAPP
         </button>
 
+        ${['men-stitched','men-unstitched','women-stitched','women-unstitched'].includes(product.category) ? `
+        <a href="tryon.html?product=${product.id}" class="btn-outline btn-full" style="margin-top: 8px;text-align:center;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> VIRTUAL TRY-ON
+        </a>
+        ` : ''}
+
         <!-- Product Details Accordion -->
         <div class="product-accordion">
           <div class="product-accordion-item">
