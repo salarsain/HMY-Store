@@ -322,10 +322,10 @@ const TryOn = {
 
       document.getElementById('progressText').textContent = 'AI is generating your try-on... (30-90 seconds)';
 
-      // Call CatVTON API
-      const prediction = await app.predict('/submit', [
-        personBlob,       // Person image
-        { background: personBlob, layers: [], composite: null },  // Mask (auto-generate)
+      // Call CatVTON API — endpoint is /submit_function
+      // Params: person_image (ImageEditor), garment_image, cloth_type, steps, cfg, seed
+      const prediction = await app.predict('/submit_function', [
+        { background: personBlob, layers: [], composite: null },  // Person image (ImageEditor format)
         garmentBlob,       // Garment image
         clothType,         // Cloth type: upper/lower/overall
         50,                // Inference steps
