@@ -37,6 +37,33 @@ const TryOn = {
     });
   },
 
+  // ── Convert any image blob to JPEG (strips alpha channel) ──
+  blobToJpeg(blob) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        // White background to replace transparency
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob((jpegBlob) => {
+          if (jpegBlob) {
+            console.log('[TryOn] Converted to JPEG:', jpegBlob.size, 'bytes');
+            resolve(jpegBlob);
+          } else {
+            reject(new Error('Failed to convert image to JPEG'));
+          }
+        }, 'image/jpeg', 0.92);
+      };
+      img.onerror = () => reject(new Error('Failed to load image for conversion'));
+      img.src = URL.createObjectURL(blob);
+    });
+  },
+
   // ── Person Photo Upload ──
   setupPersonUpload() {
     const zone = document.getElementById('personUploadZone');
@@ -310,6 +337,8 @@ const TryOn = {
         const resp = await fetch(personBlob);
         personBlob = await resp.blob();
       }
+      // Convert to JPEG to strip alpha channel (fixes RGBA error)
+      personBlob = await this.blobToJpeg(personBlob);
 
       // Prepare garment image as blob
       let garmentBlob = this.garmentImage;
@@ -317,6 +346,8 @@ const TryOn = {
         const resp = await fetch(garmentBlob);
         garmentBlob = await resp.blob();
       }
+      // Convert to JPEG to strip alpha channel
+      garmentBlob = await this.blobToJpeg(garmentBlob);
 
       // Try each model in order until one works
       let prediction = null;
