@@ -4,15 +4,16 @@
 // ==========================================================================
 
 const TryOn = {
-  // HuggingFace token for more quota (get free from https://huggingface.co/settings/tokens)
-  HF_TOKEN: null, // Set to 'hf_xxxxx' for 5 min/day free quota
+  // HuggingFace token — stored in browser localStorage (not in code for security)
+  // To set: open browser console (F12) → type: localStorage.setItem('hf_token', 'hf_YOUR_TOKEN')
+  HF_TOKEN: localStorage.getItem('hf_token') || null,
 
   // Models: CatVTON first (supports upper/lower/overall), IDM-VTON fallback
   MODELS: [
     { name: 'CatVTON', space: 'zhengchong/CatVTON', endpoint: '/submit_function' },
     { name: 'IDM-VTON', space: 'yisol/IDM-VTON', endpoint: '/tryon' }
   ],
-  
+
   // State
   personImage: null,     // File/Blob
   garmentImage: null,    // File/Blob
@@ -194,7 +195,7 @@ const TryOn = {
     let products;
     try {
       products = typeof _getActiveProducts === 'function' ? _getActiveProducts() : (typeof PRODUCTS !== 'undefined' ? PRODUCTS : []);
-    } catch(e) {
+    } catch (e) {
       products = [];
     }
     const product = products.find(p => p.id === productId);
@@ -255,12 +256,12 @@ const TryOn = {
     let products;
     try {
       products = typeof _getActiveProducts === 'function' ? _getActiveProducts() : (typeof PRODUCTS !== 'undefined' ? PRODUCTS : []);
-    } catch(e) {
+    } catch (e) {
       products = [];
     }
 
     // Filter only clothing items
-    const clothing = products.filter(p => 
+    const clothing = products.filter(p =>
       ['men-stitched', 'men-unstitched', 'women-stitched', 'women-unstitched'].includes(p.category)
     );
 
@@ -364,10 +365,10 @@ const TryOn = {
         try {
           document.getElementById('progressText').textContent = `Connecting to ${model.name}...`;
           console.log(`[TryOn] Trying model: ${model.name} (${model.space})`);
-          
+
           const connectOpts = this.HF_TOKEN ? { hf_token: this.HF_TOKEN } : {};
           const app = await Client.connect(model.space, connectOpts);
-          
+
           document.getElementById('progressText').textContent = `${model.name}: Uploading images...`;
 
           let args;
@@ -419,13 +420,13 @@ const TryOn = {
 
     } catch (error) {
       console.error('[TryOn] Generation error:', error);
-      
+
       loading.classList.remove('active');
       result.classList.add('active');
-      
+
       let errorMessage = error.message || 'Connection error';
       let helpText = 'The free AI model is currently busy or in a queue.';
-      
+
       if (errorMessage.includes('fetch') || errorMessage.includes('network')) {
         helpText = 'Could not connect to the AI server. Check your internet connection.';
       } else if (errorMessage.includes('queue') || errorMessage.includes('busy')) {
@@ -433,7 +434,7 @@ const TryOn = {
       } else if (errorMessage.includes('Gradio')) {
         helpText = 'The AI engine failed to load. Try refreshing the page.';
       }
-      
+
       document.getElementById('resultImage').innerHTML = `
         <div style="padding:40px;text-align:center;">
           <i class="fa-solid fa-exclamation-triangle" style="font-size:2rem;color:#E8505B;margin-bottom:12px;display:block;"></i>
