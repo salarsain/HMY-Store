@@ -1,13 +1,16 @@
 // ==========================================================================
 // HMY Store — Virtual Try-On Logic (tryon.js)
-// Uses IDM-VTON (primary) + CatVTON (fallback) via Gradio JS Client
+// Uses CatVTON (full body) + IDM-VTON (upper fallback) via Gradio JS Client
 // ==========================================================================
 
 const TryOn = {
-  // Models in priority order
+  // HuggingFace token for more quota (get free from https://huggingface.co/settings/tokens)
+  HF_TOKEN: null, // Set to 'hf_xxxxx' for 5 min/day free quota
+
+  // Models: CatVTON first (supports upper/lower/overall), IDM-VTON fallback
   MODELS: [
-    { name: 'IDM-VTON', space: 'yisol/IDM-VTON', endpoint: '/tryon' },
-    { name: 'CatVTON', space: 'zhengchong/CatVTON', endpoint: '/submit_function' }
+    { name: 'CatVTON', space: 'zhengchong/CatVTON', endpoint: '/submit_function' },
+    { name: 'IDM-VTON', space: 'yisol/IDM-VTON', endpoint: '/tryon' }
   ],
   
   // State
@@ -362,7 +365,8 @@ const TryOn = {
           document.getElementById('progressText').textContent = `Connecting to ${model.name}...`;
           console.log(`[TryOn] Trying model: ${model.name} (${model.space})`);
           
-          const app = await Client.connect(model.space);
+          const connectOpts = this.HF_TOKEN ? { hf_token: this.HF_TOKEN } : {};
+          const app = await Client.connect(model.space, connectOpts);
           
           document.getElementById('progressText').textContent = `${model.name}: Uploading images...`;
 
