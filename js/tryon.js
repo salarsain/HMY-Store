@@ -352,9 +352,13 @@ const TryOn = {
       }
       // Convert to JPEG to strip alpha channel
       garmentBlob = await this.blobToJpeg(garmentBlob);
-
-      // Always use IDM-VTON first (upper body), CatVTON as fallback
-      const modelsToTry = this.MODELS;
+      // Filter models based on cloth type
+      // IDM-VTON only handles upper body — skip it for lower/overall
+      let modelsToTry = this.MODELS;
+      if (clothType !== 'upper') {
+        modelsToTry = this.MODELS.filter(m => m.name !== 'IDM-VTON');
+        console.log(`[TryOn] Cloth type "${clothType}" — only using CatVTON (IDM-VTON skipped)`);
+      }
 
       // Try each model in order until one works
       let prediction = null;
@@ -395,7 +399,7 @@ const TryOn = {
             ];
           }
 
-          document.getElementById('progressText').textContent = `${model.name}: Generating try-on... (30-90 seconds)`;
+          document.getElementById('progressText').textContent = `${model.name}: Generating ${clothType} try-on... (30-90 seconds)`;
 
           prediction = await app.predict(model.endpoint, args);
           usedModel = model.name;
@@ -415,7 +419,11 @@ const TryOn = {
         console.log(`[TryOn] Success with ${usedModel}!`);
         this.showResult(resultUrl);
       } else {
-        throw lastError || new Error('All AI models failed');
+        // If CatVTON failed for full/lower, give specific error
+        const errorMsg = clothType !== 'upper' 
+          ? `CatVTON (full body model) is busy. Try "Upper Body" mode or wait 5 minutes.`
+          : 'All AI models are currently busy. Please try again later.';
+        throw new Error(lastError?.message || errorMsg);
       }
 
     } catch (error) {
