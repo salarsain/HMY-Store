@@ -165,13 +165,11 @@
 
     <!-- Options -->
     <div class="tryon-options">
-      <div class="tryon-option-group">
-        <label>Cloth Type</label>
-        <select id="clothType">
-          <option value="upper">Upper Body (Kurta/Shirt)</option>
-          <option value="lower">Lower Body (Trouser/Shalwar)</option>
-          <option value="overall">Full Outfit</option>
-        </select>
+      <div class="tryon-option-group" style="text-align:center;">
+        <span style="color:var(--color-gold);font-size:0.75rem;letter-spacing:1px;text-transform:uppercase;">
+          <i class="fa-solid fa-shirt"></i> Upper Body Try-On (Kurta / Shirt / Kameez)
+        </span>
+        <input type="hidden" id="clothType" value="upper">
       </div>
     </div>
 
@@ -236,6 +234,6 @@
   <script src="js/products.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/app.js"></script>
-  <script type="module" src="js/tryon.js?v=7"></script>
+  <script type="module" src="js/tryon.js?v=8"></script>
 </body>
 </html>
