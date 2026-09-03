@@ -8,9 +8,9 @@ const TryOn = {
   // To set: open browser console (F12) → type: localStorage.setItem('hf_token', 'hf_YOUR_TOKEN')
   HF_TOKEN: localStorage.getItem('hf_token') || null,
 
-  // Models: Kolors (full body best), CatVTON (full body), IDM-VTON (upper only)
+  // Models: OOTDiffusion (full body best), CatVTON (full body), IDM-VTON (upper only)
   MODELS: [
-    { name: 'Kolors-VTON', space: 'Kwai-Kolors/Kolors-Virtual-Try-On', endpoint: '/predict' },
+    { name: 'OOTDiffusion', space: 'levihsu/OOTDiffusion', endpoint: '/process_dc' },
     { name: 'CatVTON', space: 'zhengchong/CatVTON', endpoint: '/submit_function' },
     { name: 'IDM-VTON', space: 'yisol/IDM-VTON', endpoint: '/tryon' }
   ],
@@ -569,11 +569,20 @@ const TryOn = {
           document.getElementById('progressText').textContent = `${model.name}: Uploading images...`;
 
           let args;
-          if (model.name === 'Kolors-VTON') {
-            // Kolors-VTON: simple — just person image + garment image (full body by default)
+          if (model.name === 'OOTDiffusion') {
+            // OOTDiffusion full-body: person, garment, category, images, steps, guidance, seed
+            // Map our cloth types to OOTDiffusion categories
+            const ootdCategory = clothType === 'lower' ? 'Lower-body' 
+              : clothType === 'overall' ? 'Dress' 
+              : 'Upper-body';
             args = [
-              personBlob,
-              garmentBlob
+              personBlob,        // Model image
+              garmentBlob,       // Garment image
+              ootdCategory,      // Garment category
+              1,                 // Number of images
+              20,                // Steps
+              2.0,               // Guidance scale
+              -1                 // Seed (-1 = random)
             ];
           } else if (model.name === 'IDM-VTON') {
             // IDM-VTON params: person(ImageEditor), garment, description, auto_mask, crop, steps, seed
@@ -613,21 +622,22 @@ const TryOn = {
 
       // Check result from HuggingFace models
       if (prediction && prediction.data && prediction.data[0]) {
+        let resultUrl;
         const resultData = prediction.data[0];
-        const resultUrl = resultData.url || resultData;
+        
+        // OOTDiffusion returns gallery array: [{image:{url}}, ...]
+        if (Array.isArray(resultData) && resultData[0]?.image?.url) {
+          resultUrl = resultData[0].image.url;
+        } else if (resultData?.image?.url) {
+          resultUrl = resultData.image.url;
+        } else {
+          resultUrl = resultData.url || resultData;
+        }
+        
         console.log(`[TryOn] Success with ${usedModel}!`);
         this.showResult(resultUrl);
       } else {
-        // All HuggingFace models failed — try Pollinations.ai as final fallback
-        console.log('[TryOn] HuggingFace models failed, trying Pollinations.ai...');
-        try {
-          const polliResult = await this.tryPollinationsTryOn(personBlob, garmentBlob, clothType);
-          console.log('[TryOn] Success with Pollinations AI!');
-          this.showResult(polliResult);
-        } catch (polliErr) {
-          console.warn('[TryOn] Pollinations also failed:', polliErr.message);
-          throw new Error(lastError?.message || polliErr.message || 'All AI models are currently busy.');
-        }
+        throw new Error(lastError?.message || 'All AI models are currently busy. Try again in a few minutes.');
       }
 
     } catch (error) {
