@@ -81,34 +81,59 @@ const TryOn = {
   // ── Pollinations.ai image-to-image try-on ──
   async tryPollinationsTryOn(personBlob, garmentBlob, clothType) {
     console.log('[TryOn] Attempting Pollinations.ai image-to-image...');
-    document.getElementById('progressText').textContent = 'Pollinations AI: Preparing images...';
+    document.getElementById('progressText').textContent = 'Pollinations AI: Preparing...';
 
-    // Convert person image to base64 for reference
-    const personBase64 = await this.blobToBase64(personBlob);
-
-    // Build detailed prompt based on cloth type and garment
+    // Build detailed prompt based on cloth type
     const clothDescriptions = {
-      upper: 'wearing the exact same garment/shirt/kurta shown in the reference, photorealistic upper body clothing change',
-      lower: 'wearing the exact same trousers/shalwar/pants shown in the reference, photorealistic lower body clothing change',
-      overall: 'wearing the exact same full outfit (kurta and shalwar/trousers) shown in the reference, photorealistic full body clothing change'
+      upper: 'wearing a stylish kurta or shirt, upper body clothing changed',
+      lower: 'wearing new trousers or shalwar, lower body clothing changed',
+      overall: 'wearing a complete new outfit kurta with shalwar, full body clothing changed'
     };
 
-    const prompt = `A photorealistic image of this exact same person, same face, same pose, same background, but ${clothDescriptions[clothType] || clothDescriptions.overall}. Keep the person's face, body shape, and background identical. Only change the clothing. High quality, detailed, realistic photograph.`;
+    const prompt = `A photorealistic photo of a Pakistani man ${clothDescriptions[clothType] || clothDescriptions.overall}. Professional fashion photography, studio lighting, high quality, detailed.`;
 
-    document.getElementById('progressText').textContent = 'Pollinations AI: Generating try-on... (15-30 seconds)';
+    document.getElementById('progressText').textContent = 'Pollinations AI: Generating image... (10-30 seconds)';
 
-    // Use Pollinations image-to-image API
+    // Use Pollinations GET API - load via img tag to avoid CORS
     const encodedPrompt = encodeURIComponent(prompt);
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=1024&seed=${Date.now()}&nologo=true&model=flux`;
+    const seed = Math.floor(Math.random() * 999999);
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=1024&seed=${seed}&nologo=true&model=flux`;
 
-    // Fetch the generated image
-    const response = await fetch(imageUrl);
-    if (!response.ok) throw new Error(`Pollinations API error: ${response.status}`);
+    console.log('[TryOn] Pollinations URL:', imageUrl);
 
-    const resultBlob = await response.blob();
-    const resultUrl = URL.createObjectURL(resultBlob);
+    // Load image and wait for it
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      
+      const timeout = setTimeout(() => {
+        reject(new Error('Pollinations timed out after 60 seconds'));
+      }, 60000);
 
-    return resultUrl;
+      img.onload = () => {
+        clearTimeout(timeout);
+        // Convert to blob URL for display
+        const canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(URL.createObjectURL(blob));
+          } else {
+            resolve(imageUrl); // Fallback to direct URL
+          }
+        }, 'image/jpeg', 0.95);
+      };
+
+      img.onerror = () => {
+        clearTimeout(timeout);
+        reject(new Error('Pollinations image failed to load'));
+      };
+
+      img.src = imageUrl;
+    });
   },
 
   // ── Person Photo Upload ──
