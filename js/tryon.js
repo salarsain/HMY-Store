@@ -366,8 +366,30 @@ const TryOn = {
     result.classList.remove('active');
 
     const clothType = document.getElementById('clothType')?.value || 'upper';
+    const selectedModel = document.getElementById('aiModel')?.value || 'auto';
 
     try {
+      // If user explicitly chose Pollinations, skip HuggingFace entirely
+      if (selectedModel === 'Pollinations') {
+        document.getElementById('progressText').textContent = 'Pollinations AI: Starting...';
+        // Prepare images
+        let personBlob = this.personImage;
+        if (!(personBlob instanceof Blob)) { personBlob = await (await fetch(personBlob)).blob(); }
+        personBlob = await this.blobToJpeg(personBlob);
+        let garmentBlob = this.garmentImage;
+        if (!(garmentBlob instanceof Blob)) { garmentBlob = await (await fetch(garmentBlob)).blob(); }
+        garmentBlob = await this.blobToJpeg(garmentBlob);
+
+        const polliResult = await this.tryPollinationsTryOn(personBlob, garmentBlob, clothType);
+        console.log('[TryOn] Success with Pollinations AI!');
+        this.showResult(polliResult);
+
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> TRY IT ON';
+        loading.classList.remove('active');
+        return;
+      }
+
       document.getElementById('progressText').textContent = 'Loading AI engine...';
 
       // Import Gradio client via esm.sh (reliable ESM CDN)
@@ -395,10 +417,15 @@ const TryOn = {
       }
       // Convert to JPEG to strip alpha channel
       garmentBlob = await this.blobToJpeg(garmentBlob);
-      // Filter models based on cloth type
-      // IDM-VTON only handles upper body — skip it for lower/overall
+
+      // Filter models based on user selection and cloth type
       let modelsToTry = this.MODELS;
-      if (clothType !== 'upper') {
+      if (selectedModel !== 'auto') {
+        // User chose a specific HuggingFace model
+        modelsToTry = this.MODELS.filter(m => m.name === selectedModel);
+        console.log(`[TryOn] User selected model: ${selectedModel}`);
+      } else if (clothType !== 'upper') {
+        // Auto mode: skip IDM-VTON for lower/overall
         modelsToTry = this.MODELS.filter(m => m.name !== 'IDM-VTON');
         console.log(`[TryOn] Cloth type "${clothType}" — only using CatVTON (IDM-VTON skipped)`);
       }

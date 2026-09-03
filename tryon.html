@@ -166,6 +166,15 @@
     <!-- Options -->
     <div class="tryon-options">
       <div class="tryon-option-group">
+        <label>AI Model</label>
+        <select id="aiModel">
+          <option value="auto">Auto (Best Available)</option>
+          <option value="CatVTON">CatVTON (Full Body)</option>
+          <option value="IDM-VTON">IDM-VTON (Upper Only)</option>
+          <option value="Pollinations">Pollinations (Free Unlimited)</option>
+        </select>
+      </div>
+      <div class="tryon-option-group">
         <label>Cloth Type</label>
         <select id="clothType">
           <option value="overall">Full Outfit (Kurta + Shalwar)</option>
@@ -236,6 +245,6 @@
   <script src="js/products.js"></script>
   <script src="js/cart.js"></script>
   <script src="js/app.js"></script>
-  <script type="module" src="js/tryon.js?v=10"></script>
+  <script type="module" src="js/tryon.js?v=11"></script>
 </body>
 </html>
