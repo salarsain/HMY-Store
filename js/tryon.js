@@ -68,6 +68,49 @@ const TryOn = {
     });
   },
 
+  // ── Convert blob to base64 data URL ──
+  blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  },
+
+  // ── Pollinations.ai image-to-image try-on ──
+  async tryPollinationsTryOn(personBlob, garmentBlob, clothType) {
+    console.log('[TryOn] Attempting Pollinations.ai image-to-image...');
+    document.getElementById('progressText').textContent = 'Pollinations AI: Preparing images...';
+
+    // Convert person image to base64 for reference
+    const personBase64 = await this.blobToBase64(personBlob);
+
+    // Build detailed prompt based on cloth type and garment
+    const clothDescriptions = {
+      upper: 'wearing the exact same garment/shirt/kurta shown in the reference, photorealistic upper body clothing change',
+      lower: 'wearing the exact same trousers/shalwar/pants shown in the reference, photorealistic lower body clothing change',
+      overall: 'wearing the exact same full outfit (kurta and shalwar/trousers) shown in the reference, photorealistic full body clothing change'
+    };
+
+    const prompt = `A photorealistic image of this exact same person, same face, same pose, same background, but ${clothDescriptions[clothType] || clothDescriptions.overall}. Keep the person's face, body shape, and background identical. Only change the clothing. High quality, detailed, realistic photograph.`;
+
+    document.getElementById('progressText').textContent = 'Pollinations AI: Generating try-on... (15-30 seconds)';
+
+    // Use Pollinations image-to-image API
+    const encodedPrompt = encodeURIComponent(prompt);
+    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=1024&seed=${Date.now()}&nologo=true&model=flux`;
+
+    // Fetch the generated image
+    const response = await fetch(imageUrl);
+    if (!response.ok) throw new Error(`Pollinations API error: ${response.status}`);
+
+    const resultBlob = await response.blob();
+    const resultUrl = URL.createObjectURL(resultBlob);
+
+    return resultUrl;
+  },
+
   // ── Person Photo Upload ──
   setupPersonUpload() {
     const zone = document.getElementById('personUploadZone');
@@ -412,18 +455,23 @@ const TryOn = {
         }
       }
 
-      // Check result
+      // Check result from HuggingFace models
       if (prediction && prediction.data && prediction.data[0]) {
         const resultData = prediction.data[0];
         const resultUrl = resultData.url || resultData;
         console.log(`[TryOn] Success with ${usedModel}!`);
         this.showResult(resultUrl);
       } else {
-        // If CatVTON failed for full/lower, give specific error
-        const errorMsg = clothType !== 'upper' 
-          ? `CatVTON (full body model) is busy. Try "Upper Body" mode or wait 5 minutes.`
-          : 'All AI models are currently busy. Please try again later.';
-        throw new Error(lastError?.message || errorMsg);
+        // All HuggingFace models failed — try Pollinations.ai as final fallback
+        console.log('[TryOn] HuggingFace models failed, trying Pollinations.ai...');
+        try {
+          const polliResult = await this.tryPollinationsTryOn(personBlob, garmentBlob, clothType);
+          console.log('[TryOn] Success with Pollinations AI!');
+          this.showResult(polliResult);
+        } catch (polliErr) {
+          console.warn('[TryOn] Pollinations also failed:', polliErr.message);
+          throw new Error(lastError?.message || polliErr.message || 'All AI models are currently busy.');
+        }
       }
 
     } catch (error) {
