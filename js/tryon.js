@@ -78,30 +78,132 @@ const TryOn = {
     });
   },
 
+  // ── Analyze garment image pixels (extract colors, style info) ──
+  analyzeGarmentPixels(blob) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const size = 64; // Sample at 64x64 for speed
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, size, size);
+        const imageData = ctx.getImageData(0, 0, size, size);
+        const pixels = imageData.data;
+
+        // Extract dominant colors
+        const colorCounts = {};
+        for (let i = 0; i < pixels.length; i += 16) { // Sample every 4th pixel
+          const r = pixels[i], g = pixels[i+1], b = pixels[i+2];
+          // Quantize to reduce colors
+          const qr = Math.round(r / 32) * 32;
+          const qg = Math.round(g / 32) * 32;
+          const qb = Math.round(b / 32) * 32;
+          const key = `${qr},${qg},${qb}`;
+          colorCounts[key] = (colorCounts[key] || 0) + 1;
+        }
+
+        // Sort by frequency, get top 3 colors
+        const sorted = Object.entries(colorCounts).sort((a, b) => b[1] - a[1]);
+        const topColors = sorted.slice(0, 3).map(([rgb]) => {
+          const [r, g, b] = rgb.split(',').map(Number);
+          return this.rgbToColorName(r, g, b);
+        });
+
+        // Detect if garment has patterns/embroidery
+        let variance = 0;
+        for (let i = 0; i < pixels.length - 4; i += 4) {
+          variance += Math.abs(pixels[i] - pixels[i+4]);
+        }
+        variance /= (pixels.length / 4);
+        const hasPattern = variance > 30;
+
+        resolve({
+          colors: [...new Set(topColors)],
+          hasPattern,
+          isDetailed: variance > 50
+        });
+      };
+      img.src = URL.createObjectURL(blob);
+    });
+  },
+
+  // ── RGB to human-readable color name ──
+  rgbToColorName(r, g, b) {
+    const colors = [
+      { name: 'white', r: 255, g: 255, b: 255 },
+      { name: 'black', r: 0, g: 0, b: 0 },
+      { name: 'dark navy blue', r: 0, g: 0, b: 128 },
+      { name: 'royal blue', r: 64, g: 64, b: 224 },
+      { name: 'deep red', r: 160, g: 0, b: 0 },
+      { name: 'maroon', r: 128, g: 0, b: 0 },
+      { name: 'dark green', r: 0, g: 96, b: 0 },
+      { name: 'golden', r: 224, g: 192, b: 64 },
+      { name: 'cream', r: 255, g: 240, b: 200 },
+      { name: 'beige', r: 224, g: 200, b: 160 },
+      { name: 'brown', r: 128, g: 64, b: 0 },
+      { name: 'grey', r: 128, g: 128, b: 128 },
+      { name: 'purple', r: 128, g: 0, b: 128 },
+      { name: 'pink', r: 255, g: 128, b: 160 },
+      { name: 'orange', r: 255, g: 160, b: 0 },
+      { name: 'sky blue', r: 128, g: 192, b: 255 },
+      { name: 'teal', r: 0, g: 128, b: 128 },
+    ];
+    let closest = colors[0];
+    let minDist = Infinity;
+    for (const c of colors) {
+      const dist = Math.sqrt((r-c.r)**2 + (g-c.g)**2 + (b-c.b)**2);
+      if (dist < minDist) { minDist = dist; closest = c; }
+    }
+    return closest.name;
+  },
+
   // ── Pollinations.ai image-to-image try-on ──
   async tryPollinationsTryOn(personBlob, garmentBlob, clothType) {
     console.log('[TryOn] Attempting Pollinations.ai image-to-image...');
-    document.getElementById('progressText').textContent = 'Pollinations AI: Preparing...';
+    document.getElementById('progressText').textContent = 'Pollinations AI: Analyzing garment pixels...';
 
-    // Build detailed prompt based on cloth type
-    const clothDescriptions = {
-      upper: 'wearing a stylish kurta or shirt, upper body clothing changed',
-      lower: 'wearing new trousers or shalwar, lower body clothing changed',
-      overall: 'wearing a complete new outfit kurta with shalwar, full body clothing changed'
+    // Step 1: Analyze garment pixels for colors and patterns
+    const garmentInfo = await this.analyzeGarmentPixels(garmentBlob);
+    console.log('[TryOn] Garment analysis:', garmentInfo);
+
+    const colorDesc = garmentInfo.colors.join(' and ');
+    const patternDesc = garmentInfo.hasPattern 
+      ? 'with intricate embroidery and detailed patterns' 
+      : 'with a clean solid fabric';
+
+    // Step 2: Convert person image to base64 for reference
+    const personBase64 = await this.blobToBase64(personBlob);
+
+    // Step 3: Build precise prompt with garment pixel analysis
+    const clothPrompts = {
+      upper: `wearing a ${colorDesc} colored kurta/shirt ${patternDesc}, same original trousers/pants`,
+      lower: `same upper clothing, wearing ${colorDesc} colored shalwar/trousers ${patternDesc}`,
+      overall: `wearing a full ${colorDesc} colored Pakistani outfit (kurta with shalwar) ${patternDesc}`
     };
 
-    const prompt = `A photorealistic photo of a Pakistani man ${clothDescriptions[clothType] || clothDescriptions.overall}. Professional fashion photography, studio lighting, high quality, detailed.`;
+    const prompt = `Reconstruct this exact same person with same face same pose same background, but now ${clothPrompts[clothType] || clothPrompts.overall}. Photorealistic, same person identity preserved, high quality fashion photography.`;
 
-    document.getElementById('progressText').textContent = 'Pollinations AI: Generating image... (10-30 seconds)';
+    document.getElementById('progressText').textContent = `Pollinations AI: Generating ${colorDesc} outfit... (15-30 sec)`;
 
-    // Use Pollinations GET API - load via img tag to avoid CORS
+    // Step 4: Use Pollinations with person image as reference
     const encodedPrompt = encodeURIComponent(prompt);
+    const encodedImage = encodeURIComponent(personBase64);
     const seed = Math.floor(Math.random() * 999999);
-    const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=1024&seed=${seed}&nologo=true&model=flux`;
+    
+    // Try with image reference parameter first
+    let imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=1024&seed=${seed}&nologo=true&model=flux&image=${encodedImage}`;
+    
+    // If URL is too long (base64 is huge), fall back to prompt-only
+    if (imageUrl.length > 8000) {
+      console.log('[TryOn] Image URL too long, using prompt-only mode');
+      imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=768&height=1024&seed=${seed}&nologo=true&model=flux`;
+    }
 
-    console.log('[TryOn] Pollinations URL:', imageUrl);
+    console.log('[TryOn] Pollinations generating with colors:', garmentInfo.colors);
 
-    // Load image and wait for it
+    // Step 5: Load generated image
     return new Promise((resolve, reject) => {
       const img = new Image();
       img.crossOrigin = 'anonymous';
@@ -112,18 +214,13 @@ const TryOn = {
 
       img.onload = () => {
         clearTimeout(timeout);
-        // Convert to blob URL for display
         const canvas = document.createElement('canvas');
         canvas.width = img.naturalWidth;
         canvas.height = img.naturalHeight;
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         canvas.toBlob((blob) => {
-          if (blob) {
-            resolve(URL.createObjectURL(blob));
-          } else {
-            resolve(imageUrl); // Fallback to direct URL
-          }
+          resolve(blob ? URL.createObjectURL(blob) : imageUrl);
         }, 'image/jpeg', 0.95);
       };
 
