@@ -8,8 +8,9 @@ const TryOn = {
   // To set: open browser console (F12) → type: localStorage.setItem('hf_token', 'hf_YOUR_TOKEN')
   HF_TOKEN: localStorage.getItem('hf_token') || null,
 
-  // Models: CatVTON first (supports upper/lower/overall), IDM-VTON fallback
+  // Models: Kolors (full body best), CatVTON (full body), IDM-VTON (upper only)
   MODELS: [
+    { name: 'Kolors-VTON', space: 'Kwai-Kolors/Kolors-Virtual-Try-On', endpoint: '/predict' },
     { name: 'CatVTON', space: 'zhengchong/CatVTON', endpoint: '/submit_function' },
     { name: 'IDM-VTON', space: 'yisol/IDM-VTON', endpoint: '/tryon' }
   ],
@@ -547,9 +548,9 @@ const TryOn = {
         modelsToTry = this.MODELS.filter(m => m.name === selectedModel);
         console.log(`[TryOn] User selected model: ${selectedModel}`);
       } else if (clothType !== 'upper') {
-        // Auto mode: skip IDM-VTON for lower/overall
+        // Auto mode: skip IDM-VTON for lower/overall (Kolors + CatVTON remain)
         modelsToTry = this.MODELS.filter(m => m.name !== 'IDM-VTON');
-        console.log(`[TryOn] Cloth type "${clothType}" — only using CatVTON (IDM-VTON skipped)`);
+        console.log(`[TryOn] Cloth type "${clothType}" — using Kolors + CatVTON (IDM-VTON skipped)`);
       }
 
       // Try each model in order until one works
@@ -568,7 +569,13 @@ const TryOn = {
           document.getElementById('progressText').textContent = `${model.name}: Uploading images...`;
 
           let args;
-          if (model.name === 'IDM-VTON') {
+          if (model.name === 'Kolors-VTON') {
+            // Kolors-VTON: simple — just person image + garment image (full body by default)
+            args = [
+              personBlob,
+              garmentBlob
+            ];
+          } else if (model.name === 'IDM-VTON') {
             // IDM-VTON params: person(ImageEditor), garment, description, auto_mask, crop, steps, seed
             args = [
               { background: personBlob, layers: [], composite: null },
