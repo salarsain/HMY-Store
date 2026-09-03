@@ -580,8 +580,8 @@ const TryOn = {
               garmentBlob,       // Garment image
               ootdCategory,      // Garment category
               1,                 // Number of images
-              20,                // Steps
-              2.0,               // Guidance scale
+              30,                // Steps (higher = better quality)
+              3.5,               // Guidance scale (higher = stronger garment match)
               -1                 // Seed (-1 = random)
             ];
           } else if (model.name === 'IDM-VTON') {
