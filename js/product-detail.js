@@ -3,7 +3,7 @@
 // Gallery, size/color selectors, add-to-bag, related products
 // ==========================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // ── Toast ──
   function toast(msg) {
     const c = document.getElementById('toastContainer');
@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ── Get product from URL ──
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('id');
+  await StoreData.load();   // fetch products from the cloud
   const product = getProductById(productId);
 
   if (!product) {
