@@ -1,16 +1,16 @@
-﻿// ==========================================================================
-// HMY Store V2 â€” Product Catalog (Enhanced)
+// ==========================================================================
+// HMY Store V2 — Product Catalog (Enhanced)
 // Includes sizes, colors, multiple images, detailed info
 // ==========================================================================
 
 const PRODUCTS = [
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MEN â€” STITCHED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══ MEN — STITCHED ═══
   {
     id: 1,
     title: 'HMY Royal Embroidered Kurta Set',
     slug: 'royal-embroidered-kurta-set',
     category: 'men-stitched',
-    categoryLabel: 'Men â€” Stitched',
+    categoryLabel: 'Men — Stitched',
     price: 6500,
     originalPrice: 8500,
     rating: 4.9,
@@ -38,7 +38,7 @@ const PRODUCTS = [
     title: 'HMY Classic Silk Waistcoat',
     slug: 'classic-silk-waistcoat',
     category: 'men-stitched',
-    categoryLabel: 'Men â€” Stitched',
+    categoryLabel: 'Men — Stitched',
     price: 4200,
     originalPrice: 5500,
     rating: 4.7,
@@ -65,7 +65,7 @@ const PRODUCTS = [
     title: 'HMY Platinum Shalwar Kameez',
     slug: 'platinum-shalwar-kameez',
     category: 'men-stitched',
-    categoryLabel: 'Men â€” Stitched',
+    categoryLabel: 'Men — Stitched',
     price: 5800,
     originalPrice: 7200,
     rating: 4.8,
@@ -88,13 +88,13 @@ const PRODUCTS = [
     featured: true
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• MEN â€” UNSTITCHED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══ MEN — UNSTITCHED ═══
   {
     id: 4,
     title: 'HMY Premium Egyptian Cotton (4.5m)',
     slug: 'premium-egyptian-cotton',
     category: 'men-unstitched',
-    categoryLabel: 'Men â€” Unstitched',
+    categoryLabel: 'Men — Unstitched',
     price: 4800,
     originalPrice: 6500,
     rating: 4.8,
@@ -111,7 +111,7 @@ const PRODUCTS = [
       { name: 'Charcoal', hex: '#3C3C3C' }
     ],
     description: 'Unstitched ultra-soft Egyptian long-staple cotton with a silky luster finish. Ideal for all seasons.',
-    fabric: '100% Egyptian Long-Staple Cotton (60s count) â€” Premium Giza Quality',
+    fabric: '100% Egyptian Long-Staple Cotton (60s count) — Premium Giza Quality',
     care: 'Machine washable. Iron on medium heat. Recommended: professional stitching.',
     inStock: true,
     featured: true
@@ -121,7 +121,7 @@ const PRODUCTS = [
     title: 'HMY Luxury Lawn 3-Piece (4.5m)',
     slug: 'luxury-lawn-3piece',
     category: 'men-unstitched',
-    categoryLabel: 'Men â€” Unstitched',
+    categoryLabel: 'Men — Unstitched',
     price: 3200,
     originalPrice: 4500,
     rating: 4.6,
@@ -135,20 +135,20 @@ const PRODUCTS = [
       { name: 'White', hex: '#FFFFFF' },
       { name: 'Beige', hex: '#D4BC8A' }
     ],
-    description: 'Premium lawn fabric â€” breathable, lightweight, and perfect for summer. Comes with matching shalwar piece.',
-    fabric: 'Premium Swiss Lawn â€” 100% Cotton',
+    description: 'Premium lawn fabric — breathable, lightweight, and perfect for summer. Comes with matching shalwar piece.',
+    fabric: 'Premium Swiss Lawn — 100% Cotton',
     care: 'Machine washable cold. Hang dry. Iron medium heat.',
     inStock: true,
     featured: false
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WOMEN â€” STITCHED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══ WOMEN — STITCHED ═══
   {
     id: 6,
     title: 'HMY Pret Velvet Kurti',
     slug: 'pret-velvet-kurti',
     category: 'women-stitched',
-    categoryLabel: 'Women â€” Stitched',
+    categoryLabel: 'Women — Stitched',
     price: 7500,
     originalPrice: 9900,
     rating: 4.9,
@@ -171,13 +171,13 @@ const PRODUCTS = [
     featured: true
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• WOMEN â€” UNSTITCHED â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══ WOMEN — UNSTITCHED ═══
   {
     id: 7,
     title: 'HMY Luxury Chiffon Embroidered 3-Piece',
     slug: 'luxury-chiffon-3piece',
     category: 'women-unstitched',
-    categoryLabel: 'Women â€” Unstitched',
+    categoryLabel: 'Women — Unstitched',
     price: 9500,
     originalPrice: 13000,
     rating: 5.0,
@@ -200,7 +200,7 @@ const PRODUCTS = [
     featured: true
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PERFUMES â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══ PERFUMES ═══
   {
     id: 8,
     title: 'HMY Royal Oud Eau de Parfum (100ml)',
@@ -248,7 +248,7 @@ const PRODUCTS = [
     featured: false
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ISLAMIC TOPIS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══ ISLAMIC TOPIS ═══
   {
     id: 10,
     title: 'HMY Handcrafted Omani Royal Topi',
@@ -302,7 +302,7 @@ const PRODUCTS = [
     featured: false
   },
 
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• SPECIAL ATTAR â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ═══ SPECIAL ATTAR ═══
   {
     id: 12,
     title: 'HMY Special Dehn Al Oud Royale (12ml)',
@@ -371,15 +371,11 @@ const PRODUCTS = [
     featured: false
   }
 ];
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// Helper: Get active product list (localStorage override or defaults)
-// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// ═══
+// Helper: Get active product list (cloud database, or built-in defaults)
+// ═══
 function _getActiveProducts() {
-  try {
-    const custom = localStorage.getItem('hmy_products_custom');
-    if (custom) return JSON.parse(custom);
-  } catch (e) {}
-  return PRODUCTS;
+  return StoreData.getProducts();
 }
 
 // Get product by ID
@@ -422,17 +418,17 @@ function sortProducts(products, sortBy) {
     case 'price-high': return sorted.sort((a, b) => b.price - a.price);
     case 'rating':     return sorted.sort((a, b) => b.rating - a.rating);
     case 'newest':     return sorted.sort((a, b) => b.id - a.id);
-    default:           return sorted; // 'featured' â€” original order
+    default:           return sorted; // 'featured' — original order
   }
 }
 
 // Category labels map
 const CATEGORY_LABELS = {
   'all':              'All Products',
-  'men-stitched':     'Men â€” Stitched',
-  'men-unstitched':   'Men â€” Unstitched',
-  'women-stitched':   'Women â€” Stitched',
-  'women-unstitched': 'Women â€” Unstitched',
+  'men-stitched':     'Men — Stitched',
+  'men-unstitched':   'Men — Unstitched',
+  'women-stitched':   'Women — Stitched',
+  'women-unstitched': 'Women — Unstitched',
   'perfumes':         'Perfumes',
   'islamic-topis':    'Islamic Topis',
   'special-attar':    'Special Attar'
@@ -449,3 +445,92 @@ const CATEGORY_IMAGES = {
   'special-attar':    'https://placehold.co/800x600/1A1A1A/C9A96E?text=Special+Attar&font=playfair-display'
 };
 
+// ==========================================================================
+// StoreData — cloud data layer (Supabase)
+// Products, category images and site content are loaded from the database,
+// so every device sees the same data. Falls back to a cached copy, then to
+// the built-in defaults above if the database can't be reached.
+// ==========================================================================
+const StoreData = (() => {
+  const CACHE_KEY = 'hmy_cloud_cache_v1';   // only an offline cache, NOT the source of truth
+  let cloudProducts = null;                 // null => use built-in PRODUCTS
+  let siteContent = null;
+  let categoryImages = {};
+  let loadPromise = null;
+
+  function headers() {
+    return { apikey: CONFIG.supabase.anonKey, Authorization: 'Bearer ' + CONFIG.supabase.anonKey };
+  }
+
+  async function rest(path, timeoutMs = 7000) {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), timeoutMs);
+    try {
+      const res = await fetch(CONFIG.supabase.url + '/rest/v1/' + path, { headers: headers(), signal: ctrl.signal });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } finally { clearTimeout(timer); }
+  }
+
+  function normalizeProducts(rows) {
+    return rows.map(r => {
+      const p = Object.assign({}, r.data, { id: r.id });
+      p.images = Array.isArray(p.images) ? p.images : [];
+      p.sizes = Array.isArray(p.sizes) ? p.sizes : [];
+      p.colors = Array.isArray(p.colors) ? p.colors : [];
+      p.categoryLabel = CATEGORY_LABELS[p.category] || p.categoryLabel || p.category;
+      return p;
+    });
+  }
+
+  function apply(state) {
+    cloudProducts = state.products || null;
+    siteContent = state.content || null;
+    categoryImages = state.categoryImages || {};
+  }
+
+  function load(force) {
+    if (loadPromise && !force) return loadPromise;
+    loadPromise = (async () => {
+      try {
+        const [prodRows, contentRows] = await Promise.all([
+          rest('products?select=id,data&order=id.asc'),
+          rest('site_content?select=key,value')
+        ]);
+        const kv = {};
+        contentRows.forEach(r => { kv[r.key] = r.value; });
+        const state = {
+          // Once the admin has saved to the cloud, the cloud list is the truth
+          // (even if it is empty). Before that, defaults are used.
+          products: kv.products_initialized ? normalizeProducts(prodRows) : null,
+          content: kv.content || null,
+          categoryImages: kv.category_images || {}
+        };
+        apply(state);
+        try { localStorage.setItem(CACHE_KEY, JSON.stringify(state)); } catch (e) {}
+      } catch (err) {
+        console.warn('[StoreData] cloud load failed, using cache/defaults:', err);
+        try {
+          const cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null');
+          if (cached) apply(cached);
+        } catch (e) {}
+      }
+      return true;
+    })();
+    return loadPromise;
+  }
+
+  return {
+    load,
+    getProducts: () => cloudProducts || PRODUCTS,
+    getContent: () => siteContent,
+    getCategoryImages: () => categoryImages
+  };
+})();
+
+// Best image for a category. kind: 'hero' (wide page banner) or 'card' (home showcase)
+function getCategoryImage(key, kind = 'card') {
+  const ci = StoreData.getCategoryImages()[key] || {};
+  const other = kind === 'hero' ? ci.card : ci.hero;
+  return ci[kind] || other || CATEGORY_IMAGES[key] || '';
+}
