@@ -947,3 +947,60 @@
   color: #FFFFFF;
 }
 
+
+
+/* ==========================================================================
+   IMAGE FIT FIXES — nothing gets cropped, sizes stay sensible
+   ========================================================================== */
+
+/* Product cards: 4:5 frame, whole product visible */
+.product-card .card-media {
+  aspect-ratio: 4 / 5;
+  background: var(--color-black-soft);
+}
+.product-card .card-media img {
+  object-fit: contain;
+  object-position: center;
+}
+.featured-scroll .product-card .card-media {
+  aspect-ratio: 4 / 5;
+  max-height: none;
+}
+@media (max-width: 768px) {
+  .featured-scroll .product-card .card-media { max-height: none; }
+}
+
+/* Product page: gallery has a fixed, sensible height; image is never cut */
+.product-gallery-main {
+  aspect-ratio: 4 / 5;
+  max-height: min(78vh, 680px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.product-gallery-main img {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  object-position: center;
+}
+.product-gallery-thumb {
+  object-fit: contain;
+  background: var(--color-black-card);
+}
+
+/* Category page banner: shorter, centred crop */
+.shop-hero {
+  height: clamp(200px, 26vw, 320px);
+}
+.shop-hero img {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* Home showcase cards */
+.category-showcase-item img {
+  object-fit: cover;
+  object-position: center;
+}
