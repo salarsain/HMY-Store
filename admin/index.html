@@ -2,95 +2,365 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login — HMY Store</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>HMY — Luxury Eastern Fashion & Royal Fragrances</title>
+  <meta name="description" content="Shop HMY signature eastern fashion — Men & Women stitched/unstitched collections, luxury perfumes, Islamic topis, and pure special attars. Cash on delivery nationwide.">
+
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="../css/base.css">
-  <link rel="stylesheet" href="../css/components.css">
-  <link rel="stylesheet" href="admin.css">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/pages.css">
 </head>
-<body class="admin-body">
+<body>
 
-  <div class="admin-login-page">
-    <div class="admin-login-card">
-      <div class="admin-logo">HMY</div>
-      <div class="admin-login-subtitle">Admin Panel</div>
-
-      <div class="admin-login-error" id="loginError">
-        <i class="fa-solid fa-circle-exclamation"></i> <span id="loginErrorText"></span>
-      </div>
-
-      <form id="loginForm">
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-input" id="loginEmail" placeholder="admin@hmy-store.com" required autocomplete="email">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Password</label>
-          <input type="password" class="form-input" id="loginPassword" placeholder="Enter password" required autocomplete="current-password">
-        </div>
-        <button type="submit" class="btn-primary" id="loginBtn">
-          <i class="fa-solid fa-lock"></i> SIGN IN
-        </button>
-      </form>
-
-      <p style="margin-top: 24px; font-size: 0.75rem; color: var(--color-text-muted);">
-        <a href="../index.html" style="color: var(--color-gold);">← Back to Store</a>
-      </p>
+  <!-- ═══ SPLASH / LOADING SCREEN ═══ -->
+  <div class="splash-screen" id="splashScreen">
+    <div class="splash-logo">HMY</div>
+    <div class="splash-tagline">Luxury Eastern Fashion & Royal Fragrances</div>
+    <div class="splash-loader">
+      <div class="splash-loader-bar" id="splashLoaderBar"></div>
     </div>
   </div>
 
+  <!-- ═══ ANNOUNCEMENT TICKER ═══ -->
+  <div class="announcement-bar" id="announcementBar">
+    <div class="marquee-track">
+      <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span>
+      <span class="ticker-item">★</span>
+      <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span>
+      <span class="ticker-item">★</span>
+      <span class="ticker-item">PREMIUM QUALITY ATTARS & EASTERN FASHION</span>
+      <span class="ticker-item">★</span>
+      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span>
+      <span class="ticker-item">★</span>
+      <!-- Duplicate for seamless marquee -->
+      <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span>
+      <span class="ticker-item">★</span>
+      <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span>
+      <span class="ticker-item">★</span>
+      <span class="ticker-item">PREMIUM QUALITY ATTARS & EASTERN FASHION</span>
+      <span class="ticker-item">★</span>
+      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span>
+      <span class="ticker-item">★</span>
+    </div>
+  </div>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="site-header site-header--transparent" id="siteHeader">
+    <div class="header-inner">
+      <!-- Left Nav -->
+      <nav class="header-nav header-nav-left">
+        <a href="index.html" class="nav-link active">HOME</a>
+        <div class="nav-dropdown">
+          <a href="#" class="nav-link">CATEGORIES <i class="fa-solid fa-chevron-down" style="font-size: 0.6em; margin-left: 4px;"></i></a>
+          <div class="mega-menu">
+            <div class="mega-menu-grid">
+              <div class="mega-col">
+                <h4>Men</h4>
+                <a href="shop.html?cat=men-stitched" class="mega-link">Stitched</a>
+                <a href="shop.html?cat=men-unstitched" class="mega-link">Unstitched</a>
+              </div>
+              <div class="mega-col">
+                <h4>Women</h4>
+                <a href="shop.html?cat=women-stitched" class="mega-link">Stitched</a>
+                <a href="shop.html?cat=women-unstitched" class="mega-link">Unstitched</a>
+              </div>
+              <div class="mega-col">
+                <h4>Fragrances</h4>
+                <a href="shop.html?cat=perfumes" class="mega-link">Perfumes</a>
+                <a href="shop.html?cat=special-attar" class="mega-link">Special Attar</a>
+              </div>
+              <div class="mega-col">
+                <h4>Accessories</h4>
+                <a href="shop.html?cat=islamic-topis" class="mega-link">Islamic Topis</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="shop.html" class="nav-link">SHOP ALL</a>
+      </nav>
+
+      <!-- Mobile Menu Button -->
+      <button class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <!-- Center Logo -->
+      <a href="index.html" class="header-logo">HMY</a>
+
+      <!-- Right Nav + Actions -->
+      <div class="header-nav header-nav-right">
+        <a href="tryon.html" class="nav-link">TRY ON</a>
+        <a href="#story" class="nav-link">OUR STORY</a>
+        <a href="#contact" class="nav-link">CONTACT</a>
+        <div class="header-actions">
+          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme" title="Switch Theme">
+            <i class="fa-solid fa-moon"></i>
+          </button>
+          <button class="btn-icon" id="searchToggle" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+          <button class="btn-icon cart-btn" id="openCartBtn" aria-label="Cart">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span class="cart-count" data-cart-count>0</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="searchOverlay">
+      <div class="search-overlay-inner">
+        <input type="text" id="searchInput" placeholder="Search products..." autocomplete="off">
+        <button class="btn-icon" id="searchCloseBtn"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══ MOBILE DRAWER ═══ -->
+  <div class="mobile-drawer-overlay" id="mobileOverlay"></div>
+  <aside class="mobile-drawer" id="mobileDrawer">
+    <div class="mobile-drawer-header">
+      <span class="mobile-drawer-logo">HMY</span>
+      <button class="btn-icon" id="closeMobileMenu"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <nav class="mobile-nav">
+      <a href="index.html" class="mobile-nav-link">Home</a>
+      <div class="mobile-accordion">
+        <button class="mobile-accordion-trigger">Categories <i class="fa-solid fa-plus"></i></button>
+        <div class="mobile-accordion-content">
+          <span class="mobile-sub-heading">Men</span>
+          <a href="shop.html?cat=men-stitched" class="mobile-sub-link">Stitched</a>
+          <a href="shop.html?cat=men-unstitched" class="mobile-sub-link">Unstitched</a>
+          <span class="mobile-sub-heading">Women</span>
+          <a href="shop.html?cat=women-stitched" class="mobile-sub-link">Stitched</a>
+          <a href="shop.html?cat=women-unstitched" class="mobile-sub-link">Unstitched</a>
+          <span class="mobile-sub-heading">Fragrances</span>
+          <a href="shop.html?cat=perfumes" class="mobile-sub-link">Perfumes</a>
+          <a href="shop.html?cat=special-attar" class="mobile-sub-link">Special Attar</a>
+          <span class="mobile-sub-heading">Accessories</span>
+          <a href="shop.html?cat=islamic-topis" class="mobile-sub-link">Islamic Topis</a>
+        </div>
+      </div>
+      <a href="shop.html" class="mobile-nav-link">Shop All</a>
+      <a href="tryon.html" class="mobile-nav-link" style="color:var(--color-gold);">✨ Virtual Try-On</a>
+      <a href="#story" class="mobile-nav-link">Our Story</a>
+      <a href="#contact" class="mobile-nav-link">Contact</a>
+    </nav>
+  </aside>
+
+  <!-- ═══ HERO — FULL-SCREEN VIDEO PANELS ═══ -->
+  <section class="hero" id="hero">
+    <!-- Panel 1 -->
+    <div class="hero-panel" id="heroPanel0">
+      <video autoplay muted loop playsinline class="hero-video-bg">
+        <source src="videos/hero-1.mp4" type="video/mp4">
+      </video>
+      <!-- Fallback image if no video yet -->
+      <img src="https://placehold.co/1600x900/1A1A1A/C9A96E?text=HMY+Eastern+Fashion&font=playfair-display" alt="HMY Eastern Fashion" style="display: none;" class="hero-fallback">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <span class="hero-eyebrow hero-animate-up">THE ART OF EASTERN LUXURY</span>
+      </div>
+      <div class="hero-scroll-indicator">
+        <span>Scroll</span>
+        <i class="fa-solid fa-chevron-down"></i>
+      </div>
+    </div>
+
+    <!-- Panel 2 -->
+    <div class="hero-panel" id="heroPanel1">
+      <video autoplay muted loop playsinline class="hero-video-bg">
+        <source src="videos/hero-2.mp4" type="video/mp4">
+      </video>
+      <img src="https://placehold.co/1600x900/1B2A4A/C9A96E?text=Men+Collection&font=playfair-display" alt="Men Collection" style="display: none;" class="hero-fallback">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+      <span class="hero-eyebrow hero-animate-up">MEN"S COLLECTION</span>
+      <a href="shop.html?cat=men-stitched" class="btn-primary">SHOP MEN</a>
+      </div>
+    </div>
+
+    <!-- Panel 3 -->
+    <div class="hero-panel" id="heroPanel2">
+      <video autoplay muted loop playsinline class="hero-video-bg">
+        <source src="videos/hero-3.mp4" type="video/mp4">
+      </video>
+      <img src="https://placehold.co/1600x900/6B1D2A/C9A96E?text=Women+Collection&font=playfair-display" alt="Women Collection" style="display: none;" class="hero-fallback">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+      <span class="hero-eyebrow hero-animate-up"><h1 class="hero-heading">OUR LUXURY</h1></span>
+      <a href="shop.html?cat=men-stitched" class="btn-primary">SHOP MEN</a>
+        <a href="shop.html?cat=women-stitched" class="btn-primary">SHOP WOMEN</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hero Side Dots -->
+  <div class="hero-dots" id="heroDots">
+    <button class="hero-dot active" data-panel="0"></button>
+    <button class="hero-dot" data-panel="1"></button>
+    <button class="hero-dot" data-panel="2"></button>
+  </div>
+
+  <!-- ═══ FEATURED PRODUCTS ═══ -->
+  <section class="featured-section section" id="featured">
+    <div class="container">
+      <div class="featured-header reveal">
+        <span class="eyebrow">Curated For You</span>
+        <h2 class="section-heading">Featured Collection</h2>
+        <div class="divider divider-center"></div>
+      </div>
+    </div>
+    <div class="featured-scroll stagger" id="featuredGrid">
+      <!-- Populated by JS -->
+    </div>
+    <div class="container" style="text-align: center; margin-top: var(--space-2xl);">
+      <a href="shop.html" class="btn-outline reveal">VIEW ALL PRODUCTS</a>
+    </div>
+  </section>
+
+  <!-- ═══ CATEGORY SHOWCASE ═══ -->
+  <section class="section" id="categories" style="padding: 0;">
+    <div class="category-showcase stagger" id="categoryShowcase">
+      <!-- Populated by JS -->
+    </div>
+  </section>
+
+  <!-- ═══ BRAND STORY ═══ -->
+  <section class="story-section section" id="story">
+    <div class="story-grid">
+      <div class="story-media reveal-left">
+        <video autoplay muted loop playsinline>
+          <source src="https://www.pexels.com/download/video/10547950/" type="video/mp4">
+        </video>
+      </div>
+      <div class="story-text reveal-right">
+        <span class="eyebrow">THE ART OF HMY</span>
+        <h2 class="section-heading">Crafted With Royal<br>Passion & Precision</h2>
+        <p>From intricately hand-embroidered kurtas to the rarest aged Dehn Al Oud, every HMY creation embodies an unwavering commitment to excellence and authenticity.</p>
+        <div class="story-features">
+          <div class="story-feature">
+            <span class="story-feature-dot"></span>
+            <span>100% Pure, Non-Alcoholic Special Attars</span>
+          </div>
+          <div class="story-feature">
+            <span class="story-feature-dot"></span>
+            <span>Premium Egyptian Cotton & Raw Silks</span>
+          </div>
+          <div class="story-feature">
+            <span class="story-feature-dot"></span>
+            <span>Hand-Embroidered Velvet Prayer Caps</span>
+          </div>
+          <div class="story-feature">
+            <span class="story-feature-dot"></span>
+            <span>Cash on Delivery — Nationwide Pakistan</span>
+          </div>
+        </div>
+        <a href="shop.html" class="btn-primary">SHOP THE COLLECTION</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ NEWSLETTER ═══ -->
+  <section class="newsletter-section section" id="contact">
+    <div class="newsletter-inner reveal">
+      <span class="eyebrow">Stay Connected</span>
+      <h2 class="section-heading">Join The HMY Circle</h2>
+      <p style="margin: 0 auto;">Subscribe for exclusive early access, limited-edition drops and VIP offers.</p>
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="email" placeholder="Your email address" required>
+        <button type="submit">SUBSCRIBE</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="site-footer">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <span class="footer-brand">HMY</span>
+        <p class="footer-desc">Luxury Eastern Fashion & Royal Fragrances — crafted with passion and precision since 2020.</p>
+        <div class="footer-socials">
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+          <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>SHOP</h4>
+        <a href="shop.html?cat=men-stitched">Men — Stitched</a>
+        <a href="shop.html?cat=men-unstitched">Men — Unstitched</a>
+        <a href="shop.html?cat=women-stitched">Women — Stitched</a>
+        <a href="shop.html?cat=women-unstitched">Women — Unstitched</a>
+        <a href="shop.html?cat=perfumes">Perfumes</a>
+        <a href="shop.html?cat=special-attar">Special Attar</a>
+      </div>
+      <div class="footer-col">
+        <h4>HELP</h4>
+        <a href="#">Shipping & Returns</a>
+        <a href="#">Track Order</a>
+        <a href="#">Size Guide</a>
+        <a href="#">FAQs</a>
+      </div>
+      <div class="footer-col">
+        <h4>CONTACT</h4>
+        <a href="#"><i class="fa-solid fa-envelope"></i> support@hmy-store.com</a>
+        <a href="#"><i class="fa-solid fa-phone"></i> +92 300 123 4567</a>
+        <a href="#"><i class="fa-solid fa-location-dot"></i> HMY Boutique, Pakistan</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 HMY. All Rights Reserved.</span>
+      <div class="payment-icons">
+        <i class="fa-brands fa-cc-visa"></i>
+        <i class="fa-brands fa-cc-mastercard"></i>
+        <i class="fa-solid fa-money-bill-wave" title="Cash on Delivery"></i>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══ CART DRAWER ═══ -->
+  <div class="cart-drawer-overlay" id="cartOverlay"></div>
+  <aside class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer-header">
+      <h3>YOUR BAG (<span data-cart-count>0</span>)</h3>
+      <button class="btn-icon" id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cart-drawer-body" id="cartDrawerBody">
+      <!-- Populated by JS -->
+    </div>
+    <div class="cart-drawer-footer">
+      <div class="cart-summary-row"><span>Subtotal</span><span id="cartSubtotal">Rs. 0</span></div>
+      <div class="cart-summary-row"><span>Delivery</span><span id="cartShipping">Calculated at checkout</span></div>
+      <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">Rs. 0</span></div>
+      <button class="btn-whatsapp btn-full" id="whatsappCheckoutBtn" style="margin-top: 16px;">
+        <i class="fa-brands fa-whatsapp"></i> ORDER VIA WHATSAPP
+      </button>
+      <a href="cart.html" class="btn-outline btn-full" style="margin-top: 8px; text-align: center;">VIEW FULL CART</a>
+      <button class="btn-ghost btn-full" id="clearCartBtn" style="margin-top: 4px;">Clear Bag</button>
+    </div>
+  </aside>
+
+  <!-- ═══ TOAST ═══ -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ═══ SCRIPTS ═══ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../js/config.js"></script>
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const sb = supabase.createClient(CONFIG.supabase.url, CONFIG.supabase.anonKey);
-    const loginForm = document.getElementById('loginForm');
-    const loginError = document.getElementById('loginError');
-    const loginErrorText = document.getElementById('loginErrorText');
-    const loginBtn = document.getElementById('loginBtn');
-
-    // Check if already logged in
-    sb.auth.getSession().then(({ data }) => {
-      if (data.session) {
-        window.location.href = 'dashboard.html';
-      }
-    });
-
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      loginError.style.display = 'none';
-
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value;
-
-      loginBtn.disabled = true;
-      loginBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SIGNING IN...';
-
-      try {
-        const { data, error } = await sb.auth.signInWithPassword({ email, password });
-
-        if (error) {
-          loginError.style.display = 'block';
-          loginErrorText.textContent = error.message || 'Invalid email or password.';
-          loginBtn.disabled = false;
-          loginBtn.innerHTML = '<i class="fa-solid fa-lock"></i> SIGN IN';
-          return;
-        }
-
-        // Success — redirect to dashboard
-        window.location.href = 'dashboard.html';
-      } catch (err) {
-        loginError.style.display = 'block';
-        loginErrorText.textContent = 'Connection error. Please try again.';
-        loginBtn.disabled = false;
-        loginBtn.innerHTML = '<i class="fa-solid fa-lock"></i> SIGN IN';
-      }
-    });
-  });
-  </script>
+  <script src="js/config.js"></script>
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
