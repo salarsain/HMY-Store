@@ -3,7 +3,7 @@
 // Hero, featured products, category showcase, navigation, cart drawer
 // ==========================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 
   // ══════════════════════════════════════
   // TOAST
@@ -367,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     categoryShowcase.innerHTML = categories.map(cat => `
       <a href="shop.html?cat=${cat.key}" class="category-showcase-item img-zoom-container">
-        <img src="${CATEGORY_IMAGES[cat.key]}" alt="${cat.title}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#1a1510,#2a2218)';">
+        <img src="${getCategoryImage(cat.key, 'card')}" alt="${cat.title}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#1a1510,#2a2218)';">
         <div class="category-showcase-overlay">
           <span class="category-showcase-label">${cat.label}</span>
           <h3 class="category-showcase-title">${cat.title}</h3>
@@ -418,6 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ══════════════════════════════════════
   // INIT
   // ══════════════════════════════════════
+  await StoreData.load();   // fetch products + category images from the cloud
   renderFeaturedProducts();
   renderCategoryShowcase();
   renderCartDrawer();
