@@ -3,7 +3,7 @@
 // Category filtering, search, sort, product grid rendering
 // ==========================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   // ── Toast ──
   function toast(msg) {
     const c = document.getElementById('toastContainer');
@@ -52,9 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
       activeFilterWrap.style.display = 'inline-flex';
       activeFilterText.textContent = label;
       // Update hero image
-      if (CATEGORY_IMAGES[currentCategory]) {
-        shopHeroImg.src = CATEGORY_IMAGES[currentCategory];
-      }
+      const heroSrc = getCategoryImage(currentCategory, 'hero');
+      if (heroSrc) shopHeroImg.src = heroSrc;
     } else {
       products = getProductsByCategory('all');
       shopPageTitle.textContent = 'Shop All';
@@ -244,6 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { passive: true });
 
   // ── Init ──
+  await StoreData.load();   // fetch products + category images from the cloud
   renderProducts();
   renderCartDrawer();
 });
