@@ -1,6 +1,6 @@
 // ==========================================================================
 // HMY Store — Admin Dashboard Logic (admin.js)
-// Orders, Products CMS, Site Content Manager
+// Orders, Products CMS, Category images, Site Content (all saved to Supabase)
 // ==========================================================================
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -287,9 +287,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         toast('Order deleted');
       } catch (e) { console.error(e); toast('Error deleting order', 'error'); }
     } else if (deleteTarget.type === 'product') {
-      deleteProductById(parseInt(deleteTarget.id));
-      renderProductsTable();
-      toast('Product deleted');
+      try {
+        await deleteProductCloud(parseInt(deleteTarget.id));
+        renderProductsTable();
+        toast('Product deleted from all devices');
+      } catch (e) { console.error(e); toast('Error deleting product: ' + (e.message || e), 'error'); }
     }
 
     document.getElementById('deleteModal').classList.remove('open');
@@ -298,30 +300,149 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   // ══════════════════════════════════════
-  // PRODUCTS CMS
+  // CLOUD HELPERS (Supabase DB + Storage)
+  // Everything saved here is visible on ALL devices.
   // ══════════════════════════════════════
-  const STORAGE_KEY_PRODUCTS = 'hmy_products_custom';
+  const BUCKET = 'store-media';
+  const esc = (s) => String(s ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-  function getCustomProducts() {
-    const stored = localStorage.getItem(STORAGE_KEY_PRODUCTS);
-    if (stored) {
-      try { return JSON.parse(stored); } catch (e) { return null; }
+  let adminProducts = [];
+  let productsInitialized = false;
+  let siteContent = null;
+  let categoryImages = {};
+
+  function getLegacyLocalProducts() {
+    try { const s = localStorage.getItem('hmy_products_custom'); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+  }
+
+  function showCloudWarning(msg) {
+    if (document.getElementById('cloudWarning')) return;
+    const bar = document.createElement('div');
+    bar.id = 'cloudWarning';
+    bar.style.cssText = 'background:rgba(232,80,91,0.12);border:1px solid #E8505B;color:#ffb3b8;padding:14px 18px;border-radius:8px;margin:0 0 16px;font-size:0.85rem;line-height:1.5;';
+    bar.innerHTML = '<strong>Cloud database not ready.</strong> ' + esc(msg) + ' Run <code>supabase/schema.sql</code> in Supabase → SQL Editor, then refresh this page.';
+    document.querySelector('.admin-tabs').insertAdjacentElement('beforebegin', bar);
+  }
+
+  async function loadCloudData() {
+    const [prodRes, contentRes] = await Promise.all([
+      sb.from('products').select('id,data').order('id', { ascending: true }),
+      sb.from('site_content').select('key,value')
+    ]);
+    if (prodRes.error || contentRes.error) {
+      const err = prodRes.error || contentRes.error;
+      console.error('Cloud load error:', err);
+      showCloudWarning(err.message || 'Tables are missing.');
+      adminProducts = getLegacyLocalProducts() || [...PRODUCTS];
+      return false;
     }
-    return null;
+    const kv = {};
+    contentRes.data.forEach(r => { kv[r.key] = r.value; });
+    productsInitialized = !!kv.products_initialized;
+    siteContent = kv.content || null;
+    categoryImages = kv.category_images || {};
+    if (productsInitialized) {
+      adminProducts = prodRes.data.map(r => ({ ...r.data, id: r.id }));
+    } else {
+      // Not in the cloud yet: show this device's old products (or the defaults)
+      adminProducts = getLegacyLocalProducts() || [...PRODUCTS];
+    }
+    return true;
   }
 
-  function getAllProducts() {
-    return getCustomProducts() || [...PRODUCTS];
+  async function uploadToStorage(blob, folder) {
+    const type = blob.type || 'application/octet-stream';
+    const ext = (type.split('/')[1] || 'bin').replace('jpeg', 'jpg').replace('quicktime', 'mov').replace('x-matroska', 'mkv');
+    const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await sb.storage.from(BUCKET).upload(path, blob, { cacheControl: '31536000', contentType: type });
+    if (error) throw error;
+    return sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
   }
 
-  function saveProducts(products) {
-    localStorage.setItem(STORAGE_KEY_PRODUCTS, JSON.stringify(products));
+  // Resize big photos but NEVER crop them. PNG/WebP keep transparency.
+  function compressImage(file, MAX = 1400) {
+    return new Promise((resolve, reject) => {
+      const objUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(objUrl);
+        const scale = Math.min(1, MAX / Math.max(img.naturalWidth, img.naturalHeight));
+        const w = Math.round(img.naturalWidth * scale);
+        const h = Math.round(img.naturalHeight * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const keepAlpha = file.type === 'image/png' || file.type === 'image/webp';
+        canvas.toBlob(b => b ? resolve(b) : reject(new Error('Image compression failed')),
+          keepAlpha ? 'image/png' : 'image/jpeg', 0.86);
+      };
+      img.onerror = () => reject(new Error('Not a valid image file'));
+      img.src = objUrl;
+    });
   }
 
-  function deleteProductById(id) {
-    const products = getAllProducts().filter(p => p.id !== id);
-    saveProducts(products);
+  async function dataUrlToBlob(u) { return (await fetch(u)).blob(); }
+
+  // First time only: copy the current product list (defaults or this device's old list) to the cloud.
+  async function ensureSeeded() {
+    if (productsInitialized) return;
+    toast('First-time setup: moving products to the cloud...');
+    const list = [];
+    for (const p of adminProducts) {
+      const copy = { ...p, images: [...(p.images || [])] };
+      for (let i = 0; i < copy.images.length; i++) {
+        if (String(copy.images[i]).startsWith('data:')) {
+          copy.images[i] = await uploadToStorage(await dataUrlToBlob(copy.images[i]), 'products');
+        }
+      }
+      list.push(copy);
+    }
+    const rows = list.map(({ id, ...data }) => ({ id, data }));
+    const r1 = await sb.from('products').upsert(rows);
+    if (r1.error) throw r1.error;
+    const r2 = await sb.from('site_content').upsert({ key: 'products_initialized', value: true });
+    if (r2.error) throw r2.error;
+    adminProducts = list;
+    productsInitialized = true;
+    renderSeedBanner();
+    renderProductsTable();
   }
+
+  async function saveProductCloud(product) {
+    await ensureSeeded();
+    const { id, ...data } = product;
+    const { error } = await sb.from('products').upsert({ id, data, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    const idx = adminProducts.findIndex(p => p.id === id);
+    if (idx === -1) adminProducts.push(product); else adminProducts[idx] = product;
+  }
+
+  async function deleteProductCloud(id) {
+    await ensureSeeded();
+    const { error } = await sb.from('products').delete().eq('id', id);
+    if (error) throw error;
+    adminProducts = adminProducts.filter(p => p.id !== id);
+  }
+
+  function renderSeedBanner() {
+    const el = document.getElementById('seedBanner');
+    if (!el) return;
+    if (productsInitialized) { el.innerHTML = ''; return; }
+    el.innerHTML = `
+      <div style="background:rgba(201,169,110,0.10);border:1px solid var(--color-gold);padding:14px 18px;border-radius:8px;margin-bottom:16px;font-size:0.85rem;color:var(--color-cream);display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <span style="flex:1;min-width:220px;">These products are NOT in the cloud yet, so other devices still see the default list. Save once to publish them everywhere.</span>
+        <button type="button" class="export-btn" id="seedNowBtn" style="border-color:var(--color-gold);color:var(--color-gold);"><i class="fa-solid fa-cloud-arrow-up"></i> Publish to cloud now</button>
+      </div>`;
+    document.getElementById('seedNowBtn').addEventListener('click', async () => {
+      try { await ensureSeeded(); toast('Products are now live on all devices!'); }
+      catch (e) { console.error(e); toast('Failed: ' + (e.message || e), 'error'); }
+    });
+  }
+
+  // ══════════════════════════════════════
+  // PRODUCTS CMS (cloud)
+  // ══════════════════════════════════════
+  function getAllProducts() { return adminProducts; }
 
   function renderProductsTable() {
     const body = document.getElementById('productsBody');
@@ -330,12 +451,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     body.innerHTML = products.map(p => `
       <tr>
-        <td><img src="${p.images[0] || ''}" alt="" style="width:50px;height:50px;object-fit:cover;border-radius:6px;border:1px solid rgba(255,255,255,0.1);" onerror="this.style.background='#1a1510';this.style.display='flex';this.alt='HMY';"></td>
-        <td style="font-weight:500;color:var(--color-cream);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.title}</td>
-        <td style="font-size:0.8rem;">${labels[p.category] || p.category}</td>
-        <td style="font-weight:600;">Rs. ${(p.price||0).toLocaleString()}</td>
-        <td style="color:var(--color-text-muted);text-decoration:line-through;font-size:0.8rem;">${p.originalPrice ? 'Rs. '+p.originalPrice.toLocaleString() : '—'}</td>
-        <td>${p.badge ? `<span class="status-badge confirmed" style="font-size:0.6rem;">${p.badge}</span>` : '—'}</td>
+        <td><img src="${esc((p.images && p.images[0]) || '')}" alt="" style="width:50px;height:62px;object-fit:contain;background:#111;border-radius:6px;border:1px solid rgba(255,255,255,0.1);" onerror="this.style.opacity=0.2;"></td>
+        <td style="font-weight:500;color:var(--color-cream);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(p.title)}</td>
+        <td style="font-size:0.8rem;">${esc(labels[p.category] || p.category)}</td>
+        <td style="font-weight:600;">Rs. ${(p.price || 0).toLocaleString()}</td>
+        <td style="color:var(--color-text-muted);text-decoration:line-through;font-size:0.8rem;">${p.originalPrice ? 'Rs. ' + p.originalPrice.toLocaleString() : '—'}</td>
+        <td>${p.badge ? `<span class="status-badge confirmed" style="font-size:0.6rem;">${esc(p.badge)}</span>` : '—'}</td>
         <td>${p.featured ? '<i class="fa-solid fa-star" style="color:var(--color-gold);"></i>' : '—'}</td>
         <td style="display:flex;gap:4px;">
           <button class="edit-product-btn" data-id="${p.id}" style="background:none;border:1px solid rgba(201,169,110,0.3);color:var(--color-gold);width:32px;height:32px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.75rem;">
@@ -348,33 +469,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       </tr>
     `).join('');
 
-    // Edit buttons
     body.querySelectorAll('.edit-product-btn').forEach(btn => {
       btn.addEventListener('click', () => openProductForm(parseInt(btn.dataset.id)));
     });
-
-    // Delete buttons
     body.querySelectorAll('.delete-product-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         deleteTarget = { type: 'product', id: btn.dataset.id };
-        document.getElementById('deleteModalText').textContent = 'This product will be permanently removed.';
+        document.getElementById('deleteModalText').textContent = 'This product will be permanently removed from the store (all devices).';
         document.getElementById('deleteModal').classList.add('open');
       });
     });
   }
 
-  // ── Image Upload State ──
-  let uploadedImages = []; // Array of base64 data URLs or regular URLs
+  // ── Image Upload State (public URLs from Supabase Storage) ──
+  let uploadedImages = [];
 
   function renderUploadPreview() {
     const container = document.getElementById('uploadPreview');
     container.innerHTML = uploadedImages.map((src, i) => `
       <div class="upload-preview-item">
-        <img src="${src}" alt="Image ${i+1}">
+        <img src="${esc(src)}" alt="Image ${i + 1}" style="object-fit:contain;background:#111;">
         <button type="button" class="remove-img" data-index="${i}"><i class="fa-solid fa-xmark"></i></button>
       </div>
     `).join('');
-
     container.querySelectorAll('.remove-img').forEach(btn => {
       btn.addEventListener('click', () => {
         uploadedImages.splice(parseInt(btn.dataset.index), 1);
@@ -383,59 +500,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // Compress and convert image to base64
-  function compressImage(file) {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX = 800; // max width/height
-          let w = img.width, h = img.height;
-          if (w > MAX || h > MAX) {
-            if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
-            else { w = Math.round(w * MAX / h); h = MAX; }
-          }
-          canvas.width = w;
-          canvas.height = h;
-          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-          resolve(canvas.toDataURL('image/jpeg', 0.7));
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
+  async function addProductImages(fileList) {
+    const files = Array.from(fileList).filter(f => f.type.startsWith('image/'));
+    for (const file of files) {
+      if (file.size > 8 * 1024 * 1024) { toast('Image too large (max 8MB): ' + file.name, 'error'); continue; }
+      try {
+        toast('Uploading ' + file.name + '...');
+        const blob = await compressImage(file, 1400);
+        uploadedImages.push(await uploadToStorage(blob, 'products'));
+        renderUploadPreview();
+      } catch (e) {
+        console.error(e);
+        toast('Upload failed: ' + (e.message || e), 'error');
+      }
+    }
   }
 
-  // Upload zone events
   const uploadZone = document.getElementById('uploadZone');
   const fileInput = document.getElementById('pf_imageUpload');
-
   uploadZone.addEventListener('click', () => fileInput.click());
   uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
   uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
   uploadZone.addEventListener('drop', async (e) => {
     e.preventDefault();
     uploadZone.classList.remove('drag-over');
-    const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-    for (const file of files) {
-      if (file.size > 2 * 1024 * 1024) { toast('Image too large (max 2MB): ' + file.name, 'error'); continue; }
-      const base64 = await compressImage(file);
-      uploadedImages.push(base64);
-    }
-    renderUploadPreview();
+    await addProductImages(e.dataTransfer.files);
   });
-
   fileInput.addEventListener('change', async () => {
     const files = Array.from(fileInput.files);
-    for (const file of files) {
-      if (file.size > 2 * 1024 * 1024) { toast('Image too large (max 2MB): ' + file.name, 'error'); continue; }
-      const base64 = await compressImage(file);
-      uploadedImages.push(base64);
-    }
     fileInput.value = '';
-    renderUploadPreview();
+    await addProductImages(files);
   });
 
   // Product Form
@@ -444,7 +538,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const title = document.getElementById('productFormTitle');
     const form = document.getElementById('productForm');
 
-    uploadedImages = []; // Reset
+    uploadedImages = [];
 
     if (editId) {
       const p = getAllProducts().find(x => x.id === editId);
@@ -457,7 +551,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('pf_price').value = p.price;
       document.getElementById('pf_originalPrice').value = p.originalPrice || '';
       document.getElementById('pf_description').value = p.description || '';
-      uploadedImages = [...(p.images || [])]; // Load existing images
+      uploadedImages = [...(p.images || [])];
       document.getElementById('pf_sizes').value = (p.sizes || []).join(', ');
       document.getElementById('pf_colors').value = (p.colors || []).map(c => `${c.name}:${c.hex}`).join(', ');
       document.getElementById('pf_fabric').value = p.fabric || '';
@@ -477,12 +571,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   document.getElementById('addProductBtn').addEventListener('click', () => openProductForm());
 
-  document.getElementById('productForm').addEventListener('submit', (e) => {
+  document.getElementById('productForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const products = getAllProducts();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
     const editId = document.getElementById('pf_id').value;
     const categoryLabels = CATEGORY_LABELS || {};
-
     const category = document.getElementById('pf_category').value;
     const colorsRaw = document.getElementById('pf_colors').value;
     const colors = colorsRaw ? colorsRaw.split(',').map(c => {
@@ -511,32 +604,119 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     if (editId) {
-      // Edit existing
-      const idx = products.findIndex(p => p.id === parseInt(editId));
-      if (idx !== -1) {
-        productData.id = parseInt(editId);
-        productData.rating = products[idx].rating;
-        productData.reviews = products[idx].reviews;
-        products[idx] = productData;
-      }
+      const old = adminProducts.find(p => p.id === parseInt(editId));
+      productData.id = parseInt(editId);
+      productData.rating = old ? old.rating : 4.5;
+      productData.reviews = old ? old.reviews : 0;
     } else {
-      // Add new
-      const maxId = products.reduce((max, p) => Math.max(max, p.id), 0);
-      productData.id = maxId + 1;
-      products.push(productData);
+      productData.id = adminProducts.reduce((max, p) => Math.max(max, p.id), 0) + 1;
     }
 
-    saveProducts(products);
-    renderProductsTable();
-    document.getElementById('productModal').classList.remove('open');
-    toast(editId ? 'Product updated!' : 'Product added!');
+    const original = submitBtn.innerHTML;
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    try {
+      await saveProductCloud(productData);
+      renderProductsTable();
+      document.getElementById('productModal').classList.remove('open');
+      toast(editId ? 'Product updated on all devices!' : 'Product added on all devices!');
+    } catch (err) {
+      console.error(err);
+      toast('Save failed: ' + (err.message || err), 'error');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = original;
+    }
   });
 
   // ══════════════════════════════════════
-  // SITE CONTENT CMS
+  // CATEGORY IMAGES (page banner + home showcase card)
+  // Saved to the cloud immediately after upload.
   // ══════════════════════════════════════
-  const STORAGE_KEY_CONTENT = 'hmy_site_content';
+  const CATEGORY_KEYS = Object.keys(CATEGORY_LABELS || {}).filter(k => k !== 'all');
 
+  function effectiveCategoryImage(key, kind) {
+    const ci = categoryImages[key] || {};
+    return ci[kind] || ci[kind === 'hero' ? 'card' : 'hero'] || CATEGORY_IMAGES[key] || '';
+  }
+
+  async function saveCategoryImages(next) {
+    const { error } = await sb.from('site_content').upsert({ key: 'category_images', value: next, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    categoryImages = next;
+  }
+
+  const catFileInput = document.createElement('input');
+  catFileInput.type = 'file';
+  catFileInput.accept = 'image/*';
+  catFileInput.style.display = 'none';
+  document.body.appendChild(catFileInput);
+  let catTarget = null;
+
+  catFileInput.addEventListener('change', async () => {
+    const file = catFileInput.files[0];
+    catFileInput.value = '';
+    if (!file || !catTarget) return;
+    const { key, kind } = catTarget;
+    if (file.size > 10 * 1024 * 1024) { toast('Image too large (max 10MB)', 'error'); return; }
+    try {
+      toast('Uploading image...');
+      const blob = await compressImage(file, kind === 'hero' ? 2000 : 1200);
+      const url = await uploadToStorage(blob, 'categories');
+      const next = { ...categoryImages, [key]: { ...(categoryImages[key] || {}), [kind]: url } };
+      await saveCategoryImages(next);
+      renderCategoryImageEditor();
+      toast('Saved! Visible on all devices.');
+    } catch (e) {
+      console.error(e);
+      toast('Upload failed: ' + (e.message || e), 'error');
+    }
+  });
+
+  function renderCategoryImageEditor() {
+    const el = document.getElementById('categoryImageEditors');
+    if (!el) return;
+    el.innerHTML = CATEGORY_KEYS.map(key => {
+      const ci = categoryImages[key] || {};
+      const slot = (kind, title, hint) => `
+        <div class="cat-img-slot">
+          <label>${title}</label>
+          <div class="cat-img-preview ${kind}"><img src="${esc(effectiveCategoryImage(key, kind))}" alt=""></div>
+          <div class="cat-img-hint">${hint}${ci[kind] ? '' : ' — not uploaded yet'}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button type="button" class="export-btn cat-upload-btn" data-key="${key}" data-kind="${kind}"><i class="fa-solid fa-upload"></i> Upload</button>
+            ${ci[kind] ? `<button type="button" class="export-btn cat-remove-btn" data-key="${key}" data-kind="${kind}" style="border-color:#E8505B;color:#E8505B;"><i class="fa-solid fa-xmark"></i> Remove</button>` : ''}
+          </div>
+        </div>`;
+      return `
+        <div class="cat-img-row">
+          <h4>${esc(CATEGORY_LABELS[key])}</h4>
+          <div class="cat-img-slots">
+            ${slot('hero', 'Page Banner', 'Wide image, about 1600×600')}
+            ${slot('card', 'Home Showcase Card', 'Landscape, about 800×600')}
+          </div>
+        </div>`;
+    }).join('');
+
+    el.querySelectorAll('.cat-upload-btn').forEach(btn => {
+      btn.addEventListener('click', () => { catTarget = { key: btn.dataset.key, kind: btn.dataset.kind }; catFileInput.click(); });
+    });
+    el.querySelectorAll('.cat-remove-btn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const { key, kind } = btn.dataset;
+        const entry = { ...(categoryImages[key] || {}) };
+        delete entry[kind];
+        const next = { ...categoryImages };
+        if (Object.keys(entry).length) next[key] = entry; else delete next[key];
+        try { await saveCategoryImages(next); renderCategoryImageEditor(); toast('Image removed'); }
+        catch (e) { console.error(e); toast('Failed: ' + (e.message || e), 'error'); }
+      });
+    });
+  }
+
+  // ══════════════════════════════════════
+  // SITE CONTENT CMS (cloud)
+  // ══════════════════════════════════════
   const DEFAULT_ANNOUNCEMENTS = [
     'CASH ON DELIVERY AVAILABLE NATIONWIDE',
     'ORDER VIA WHATSAPP — INSTANT CONFIRMATION',
@@ -556,24 +736,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     text: 'HMY was born from a passion for preserving the art of Eastern craftsmanship. Every stitch, every fragrance, every fabric in our collection tells a story of heritage, precision, and royal luxury. From the ateliers of Lahore to your doorstep — we bring you fashion that transcends seasons.'
   };
 
-  function getSiteContent() {
-    const stored = localStorage.getItem(STORAGE_KEY_CONTENT);
-    if (stored) {
-      try { return JSON.parse(stored); } catch (e) { return null; }
-    }
-    return null;
-  }
-
-  function saveSiteContent(content) {
-    localStorage.setItem(STORAGE_KEY_CONTENT, JSON.stringify(content));
-  }
-
   function getCurrentContent() {
-    return getSiteContent() || {
+    const base = {
       announcements: [...DEFAULT_ANNOUNCEMENTS],
-      hero: DEFAULT_HERO.map(h => ({...h})),
-      story: {...DEFAULT_STORY}
+      hero: DEFAULT_HERO.map(h => ({ ...h })),
+      story: { ...DEFAULT_STORY }
     };
+    return siteContent ? { ...base, ...siteContent } : base;
+  }
+
+  async function saveSiteContent(content) {
+    const { error } = await sb.from('site_content').upsert({ key: 'content', value: content, updated_at: new Date().toISOString() });
+    if (error) throw error;
+    siteContent = content;
+  }
+
+  async function trySaveContent(content, okMsg) {
+    try { await saveSiteContent(content); toast(okMsg); return true; }
+    catch (e) { console.error(e); toast('Save failed: ' + (e.message || e), 'error'); return false; }
   }
 
   // ── Announcement Bar Editor ──
@@ -583,95 +763,51 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     container.innerHTML = content.announcements.map((text, i) => `
       <div class="cms-list-item">
-        <input type="text" value="${text}" class="cms-input announcement-input" data-index="${i}" style="flex:1;">
+        <input type="text" value="${esc(text)}" class="cms-input announcement-input" data-index="${i}" style="flex:1;">
         <button class="cms-remove-btn" data-index="${i}" title="Remove"><i class="fa-solid fa-xmark"></i></button>
       </div>
     `).join('');
 
-    // Remove buttons
     container.querySelectorAll('.cms-remove-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
         const c = getCurrentContent();
         c.announcements.splice(parseInt(btn.dataset.index), 1);
-        saveSiteContent(c);
-        renderAnnouncementEditor();
+        if (await trySaveContent(c, 'Announcement removed')) renderAnnouncementEditor();
       });
     });
   }
 
-  document.getElementById('addAnnouncementBtn').addEventListener('click', () => {
+  document.getElementById('addAnnouncementBtn').addEventListener('click', async () => {
     const input = document.getElementById('newAnnouncementText');
     const text = input.value.trim();
     if (!text) return;
     const content = getCurrentContent();
     content.announcements.push(text);
-    saveSiteContent(content);
-    input.value = '';
-    renderAnnouncementEditor();
+    if (await trySaveContent(content, 'Announcement added')) { input.value = ''; renderAnnouncementEditor(); }
   });
 
-  document.getElementById('saveAnnouncementBtn').addEventListener('click', () => {
+  document.getElementById('saveAnnouncementBtn').addEventListener('click', async () => {
     const content = getCurrentContent();
-    const inputs = document.querySelectorAll('.announcement-input');
-    content.announcements = Array.from(inputs).map(inp => inp.value.trim()).filter(Boolean);
-    saveSiteContent(content);
-    toast('Announcement bar saved!');
+    content.announcements = Array.from(document.querySelectorAll('.announcement-input')).map(inp => inp.value.trim()).filter(Boolean);
+    await trySaveContent(content, 'Announcement bar saved!');
   });
 
-  document.getElementById('resetAnnouncementBtn').addEventListener('click', () => {
+  document.getElementById('resetAnnouncementBtn').addEventListener('click', async () => {
     const content = getCurrentContent();
     content.announcements = [...DEFAULT_ANNOUNCEMENTS];
-    saveSiteContent(content);
-    renderAnnouncementEditor();
-    toast('Announcement bar reset to default');
+    if (await trySaveContent(content, 'Announcement bar reset to default')) renderAnnouncementEditor();
   });
 
-  // ══════════════════════════════════════
-  // IndexedDB for Video Storage
-  // ══════════════════════════════════════
-  const DB_NAME = 'hmy_videos_db';
-  const DB_STORE = 'videos';
-
-  function openDB() {
-    return new Promise((resolve, reject) => {
-      const req = indexedDB.open(DB_NAME, 1);
-      req.onupgradeneeded = () => req.result.createObjectStore(DB_STORE);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
+  // ── Hero Videos Editor (videos are uploaded to cloud storage) ──
+  function videoPreviewHTML(url, onRemoveJs) {
+    return `
+      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid rgba(255,255,255,0.08);">
+        <video src="${esc(url)}" style="width:80px;height:50px;object-fit:cover;border-radius:4px;" muted preload="metadata"></video>
+        <span style="font-size:0.75rem;color:var(--color-gold);flex:1;"><i class="fa-solid fa-check-circle"></i> Video ready — press Save to publish</span>
+        <button type="button" class="cms-remove-btn" onclick="${onRemoveJs}" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+      </div>`;
   }
 
-  async function saveVideo(key, blob) {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(DB_STORE, 'readwrite');
-      tx.objectStore(DB_STORE).put(blob, key);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  }
-
-  async function getVideo(key) {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(DB_STORE, 'readonly');
-      const req = tx.objectStore(DB_STORE).get(key);
-      req.onsuccess = () => resolve(req.result || null);
-      req.onerror = () => reject(req.error);
-    });
-  }
-
-  async function deleteVideo(key) {
-    const db = await openDB();
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(DB_STORE, 'readwrite');
-      tx.objectStore(DB_STORE).delete(key);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  }
-
-  // ── Hero Videos Editor ──
   function renderHeroEditor() {
     const content = getCurrentContent();
     const container = document.getElementById('heroEditors');
@@ -683,78 +819,66 @@ document.addEventListener('DOMContentLoaded', async () => {
           <label>Video</label>
           <div class="upload-zone hero-video-upload" data-index="${i}" style="padding:14px;margin-bottom:8px;">
             <i class="fa-solid fa-video" style="font-size:1rem;color:var(--color-gold);margin-bottom:4px;"></i>
-            <p style="font-size:0.8rem;color:var(--color-text-light);">Click to upload video</p>
+            <p style="font-size:0.8rem;color:var(--color-text-light);">Click to upload video (max 50MB)</p>
             <input type="file" class="hero-video-file" data-index="${i}" accept="video/*" style="display:none;">
           </div>
           <div class="hero-video-preview" id="heroVideoPreview${i}" style="margin-bottom:8px;"></div>
-          <input type="text" class="cms-input hero-video" data-index="${i}" value="${panel.video || ''}" placeholder="Or paste URL">
+          <input type="text" class="cms-input hero-video" data-index="${i}" value="${esc(panel.video || '')}" placeholder="Or paste URL">
         </div>
-        <div class="cms-field"><label>Eyebrow Text</label><input type="text" class="cms-input hero-eyebrow" data-index="${i}" value="${panel.eyebrow || ''}"></div>
-        <div class="cms-field"><label>Heading (use &lt;br&gt; for line break)</label><input type="text" class="cms-input hero-heading" data-index="${i}" value="${panel.heading || ''}"></div>
+        <div class="cms-field"><label>Eyebrow Text</label><input type="text" class="cms-input hero-eyebrow" data-index="${i}" value="${esc(panel.eyebrow || '')}"></div>
+        <div class="cms-field"><label>Heading (use &lt;br&gt; for line break)</label><input type="text" class="cms-input hero-heading" data-index="${i}" value="${esc(panel.heading || '')}"></div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <div class="cms-field"><label>Button Text</label><input type="text" class="cms-input hero-btn-text" data-index="${i}" value="${panel.btnText || ''}"></div>
-          <div class="cms-field"><label>Button Link</label><input type="text" class="cms-input hero-btn-link" data-index="${i}" value="${panel.btnLink || ''}"></div>
+          <div class="cms-field"><label>Button Text</label><input type="text" class="cms-input hero-btn-text" data-index="${i}" value="${esc(panel.btnText || '')}"></div>
+          <div class="cms-field"><label>Button Link</label><input type="text" class="cms-input hero-btn-link" data-index="${i}" value="${esc(panel.btnLink || '')}"></div>
         </div>
       </div>
     `).join('');
 
-    // Upload zone clicks
     container.querySelectorAll('.hero-video-upload').forEach(zone => {
       const i = zone.dataset.index;
-      const fileInput = zone.querySelector('.hero-video-file');
-      zone.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', async () => {
-        const file = fileInput.files[0];
+      const input = zone.querySelector('.hero-video-file');
+      zone.addEventListener('click', () => input.click());
+      input.addEventListener('click', (e) => e.stopPropagation());
+      input.addEventListener('change', async () => {
+        const file = input.files[0];
+        input.value = '';
         if (!file) return;
         if (file.size > 50 * 1024 * 1024) { toast('Video too large (max 50MB)', 'error'); return; }
-        toast('Uploading video...');
-        await saveVideo('hero-video-' + i, file);
-        showHeroVideoPreview(i, file);
-        document.querySelector(`.hero-video[data-index="${i}"]`).value = `[UPLOADED: ${file.name}]`;
-        toast('Video uploaded for Panel ' + (parseInt(i)+1) + '!');
+        try {
+          toast('Uploading video... please wait');
+          const url = await uploadToStorage(file, 'videos');
+          document.querySelector(`.hero-video[data-index="${i}"]`).value = url;
+          document.getElementById('heroVideoPreview' + i).innerHTML =
+            videoPreviewHTML(url, `document.querySelector('.hero-video[data-index=&quot;${i}&quot;]').value='';this.closest('.hero-video-preview').innerHTML='';`);
+          toast('Video uploaded for Panel ' + (parseInt(i) + 1) + ' — press Save Hero Videos');
+        } catch (e) { console.error(e); toast('Video upload failed: ' + (e.message || e), 'error'); }
       });
     });
 
-    // Check for existing uploaded videos
-    [0,1,2].forEach(async (i) => {
-      const blob = await getVideo('hero-video-' + i);
-      if (blob) showHeroVideoPreview(i, blob);
+    content.hero.forEach((panel, i) => {
+      if (/^https?:\/\//.test(panel.video || '') && /\.(mp4|webm|mov)(\?|$)/i.test(panel.video)) {
+        document.getElementById('heroVideoPreview' + i).innerHTML =
+          videoPreviewHTML(panel.video, `document.querySelector('.hero-video[data-index=&quot;${i}&quot;]').value='';this.closest('.hero-video-preview').innerHTML='';`);
+      }
     });
   }
 
-  function showHeroVideoPreview(index, blob) {
-    const container = document.getElementById('heroVideoPreview' + index);
-    if (!container) return;
-    const url = URL.createObjectURL(blob);
-    container.innerHTML = `
-      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid rgba(255,255,255,0.08);">
-        <video src="${url}" style="width:80px;height:50px;object-fit:cover;border-radius:4px;" muted></video>
-        <span style="font-size:0.75rem;color:var(--color-gold);flex:1;"><i class="fa-solid fa-check-circle"></i> Video uploaded</span>
-        <button type="button" class="cms-remove-btn" onclick="this.closest('.cms-field').querySelector('.hero-video').value='';this.parentElement.remove();" title="Remove"><i class="fa-solid fa-xmark"></i></button>
-      </div>`;
-  }
-
-  document.getElementById('saveHeroBtn').addEventListener('click', () => {
+  document.getElementById('saveHeroBtn').addEventListener('click', async () => {
     const content = getCurrentContent();
     content.hero = [0, 1, 2].map(i => ({
-      video: document.querySelector(`.hero-video[data-index="${i}"]`)?.value || '',
+      video: document.querySelector(`.hero-video[data-index="${i}"]`)?.value.trim() || '',
       eyebrow: document.querySelector(`.hero-eyebrow[data-index="${i}"]`)?.value || '',
       heading: document.querySelector(`.hero-heading[data-index="${i}"]`)?.value || '',
       btnText: document.querySelector(`.hero-btn-text[data-index="${i}"]`)?.value || '',
       btnLink: document.querySelector(`.hero-btn-link[data-index="${i}"]`)?.value || ''
     }));
-    saveSiteContent(content);
-    toast('Hero videos saved!');
+    await trySaveContent(content, 'Hero videos saved on all devices!');
   });
 
   document.getElementById('resetHeroBtn').addEventListener('click', async () => {
     const content = getCurrentContent();
-    content.hero = DEFAULT_HERO.map(h => ({...h}));
-    saveSiteContent(content);
-    // Remove uploaded videos
-    for (let i = 0; i < 3; i++) await deleteVideo('hero-video-' + i);
-    renderHeroEditor();
-    toast('Hero videos reset to default');
+    content.hero = DEFAULT_HERO.map(h => ({ ...h }));
+    if (await trySaveContent(content, 'Hero videos reset to default')) renderHeroEditor();
   });
 
   // ── Story Editor ──
@@ -763,58 +887,46 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('storyVideoUrl').value = content.story.video || '';
     document.getElementById('storyHeading').value = content.story.heading || '';
     document.getElementById('storyText').value = content.story.text || '';
-
-    // Check for existing uploaded story video
-    getVideo('story-video').then(blob => {
-      if (blob) showStoryVideoPreview(blob);
-    });
+    const prev = document.getElementById('storyVideoPreview');
+    prev.innerHTML = '';
+    if (/^https?:\/\/.+\.(mp4|webm|mov)(\?|$)/i.test(content.story.video || '')) {
+      prev.innerHTML = videoPreviewHTML(content.story.video, `document.getElementById('storyVideoUrl').value='';this.closest('#storyVideoPreview').innerHTML='';`);
+    }
   }
 
-  // Story video upload
   const storyVideoZone = document.getElementById('storyVideoZone');
   const storyVideoFile = document.getElementById('storyVideoFile');
   storyVideoZone.addEventListener('click', () => storyVideoFile.click());
+  storyVideoFile.addEventListener('click', (e) => e.stopPropagation());
   storyVideoFile.addEventListener('change', async () => {
     const file = storyVideoFile.files[0];
+    storyVideoFile.value = '';
     if (!file) return;
     if (file.size > 50 * 1024 * 1024) { toast('Video too large (max 50MB)', 'error'); return; }
-    toast('Uploading story video...');
-    await saveVideo('story-video', file);
-    showStoryVideoPreview(file);
-    document.getElementById('storyVideoUrl').value = `[UPLOADED: ${file.name}]`;
-    toast('Story video uploaded!');
+    try {
+      toast('Uploading story video... please wait');
+      const url = await uploadToStorage(file, 'videos');
+      document.getElementById('storyVideoUrl').value = url;
+      document.getElementById('storyVideoPreview').innerHTML =
+        videoPreviewHTML(url, `document.getElementById('storyVideoUrl').value='';this.closest('#storyVideoPreview').innerHTML='';`);
+      toast('Story video uploaded — press Save Story');
+    } catch (e) { console.error(e); toast('Video upload failed: ' + (e.message || e), 'error'); }
   });
 
-  function showStoryVideoPreview(blob) {
-    const container = document.getElementById('storyVideoPreview');
-    if (!container) return;
-    const url = URL.createObjectURL(blob);
-    container.innerHTML = `
-      <div style="display:flex;align-items:center;gap:8px;padding:8px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid rgba(255,255,255,0.08);">
-        <video src="${url}" style="width:80px;height:50px;object-fit:cover;border-radius:4px;" muted></video>
-        <span style="font-size:0.75rem;color:var(--color-gold);flex:1;"><i class="fa-solid fa-check-circle"></i> Video uploaded</span>
-        <button type="button" class="cms-remove-btn" onclick="document.getElementById('storyVideoUrl').value='';this.parentElement.remove();" title="Remove"><i class="fa-solid fa-xmark"></i></button>
-      </div>`;
-  }
-
-  document.getElementById('saveStoryBtn').addEventListener('click', () => {
+  document.getElementById('saveStoryBtn').addEventListener('click', async () => {
     const content = getCurrentContent();
     content.story = {
       video: document.getElementById('storyVideoUrl').value.trim(),
       heading: document.getElementById('storyHeading').value.trim(),
       text: document.getElementById('storyText').value.trim()
     };
-    saveSiteContent(content);
-    toast('Story section saved!');
+    await trySaveContent(content, 'Story section saved on all devices!');
   });
 
   document.getElementById('resetStoryBtn').addEventListener('click', async () => {
     const content = getCurrentContent();
-    content.story = {...DEFAULT_STORY};
-    saveSiteContent(content);
-    await deleteVideo('story-video');
-    renderStoryEditor();
-    toast('Story section reset to default');
+    content.story = { ...DEFAULT_STORY };
+    if (await trySaveContent(content, 'Story section reset to default')) renderStoryEditor();
   });
 
   // ══════════════════════════════════════
@@ -836,8 +948,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   // ══════════════════════════════════════
   // INIT
   // ══════════════════════════════════════
+  await loadCloudData();
   await fetchOrders();
+  renderSeedBanner();
   renderProductsTable();
+  renderCategoryImageEditor();
   renderAnnouncementEditor();
   renderHeroEditor();
   renderStoryEditor();
