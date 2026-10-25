@@ -1,218 +1,249 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Shop — HMY Luxury Eastern Fashion</title>
-  <meta name="description" content="Browse the complete HMY collection — Men & Women stitched/unstitched, luxury perfumes, Islamic topis, and pure special attars.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/animations.css">
-  <link rel="stylesheet" href="css/layout.css">
-  <link rel="stylesheet" href="css/pages.css">
-</head>
-<body>
+// ==========================================================================
+// HMY Store V2 — Shop Page Logic (shop.js)
+// Category filtering, search, sort, product grid rendering
+// ==========================================================================
 
-  <!-- ═══ SPLASH / LOADING SCREEN ═══ -->
-  <div class="splash-screen" id="splashScreen">
-    <div class="splash-logo">HMY</div>
-    <div class="splash-tagline">Luxury Eastern Fashion & Royal Fragrances</div>
-    <div class="splash-loader">
-      <div class="splash-loader-bar" id="splashLoaderBar"></div>
-    </div>
-  </div>
+document.addEventListener('DOMContentLoaded', async () => {
+  // ── Toast ──
+  function toast(msg) {
+    const c = document.getElementById('toastContainer');
+    const el = document.createElement('div');
+    el.className = 'toast'; el.textContent = msg;
+    c.appendChild(el); setTimeout(() => el.remove(), 3000);
+  }
 
-  <!-- Announcement Bar -->
-  <div class="announcement-bar" id="announcementBar">
-    <div class="marquee-track">
-      <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span>
-      <span class="ticker-item">★</span>
-      <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span>
-      <span class="ticker-item">★</span>
-      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span>
-      <span class="ticker-item">★</span>
-      <span class="ticker-item">FREE DELIVERY ON ORDERS OVER PKR 5,000</span>
-      <span class="ticker-item">★</span>
-      <span class="ticker-item">CASH ON DELIVERY AVAILABLE NATIONWIDE</span>
-      <span class="ticker-item">★</span>
-      <span class="ticker-item">ORDER VIA WHATSAPP — INSTANT CONFIRMATION</span>
-      <span class="ticker-item">★</span>
-    </div>
-  </div>
+  // ── Parse URL params ──
+  const params = new URLSearchParams(window.location.search);
+  let currentCategory = params.get('cat') || 'all';
+  let currentSearch = params.get('search') || '';
+  let currentSort = 'featured';
 
-  <!-- Header -->
-  <header class="site-header site-header--solid" id="siteHeader">
-    <div class="header-inner">
-      <nav class="header-nav header-nav-left">
-        <a href="index.html" class="nav-link">HOME</a>
-        <div class="nav-dropdown">
-          <a href="#" class="nav-link">CATEGORIES <i class="fa-solid fa-chevron-down" style="font-size:0.6em;margin-left:4px;"></i></a>
-          <div class="mega-menu">
-            <div class="mega-menu-grid">
-              <div class="mega-col"><h4>Men</h4><a href="shop.html?cat=men-stitched" class="mega-link">Stitched</a><a href="shop.html?cat=men-unstitched" class="mega-link">Unstitched</a></div>
-              <div class="mega-col"><h4>Women</h4><a href="shop.html?cat=women-stitched" class="mega-link">Stitched</a><a href="shop.html?cat=women-unstitched" class="mega-link">Unstitched</a></div>
-              <div class="mega-col"><h4>Fragrances</h4><a href="shop.html?cat=perfumes" class="mega-link">Perfumes</a><a href="shop.html?cat=special-attar" class="mega-link">Special Attar</a></div>
-              <div class="mega-col"><h4>Accessories</h4><a href="shop.html?cat=islamic-topis" class="mega-link">Islamic Topis</a></div>
-            </div>
+  // ── DOM ──
+  const productsGrid = document.getElementById('productsGrid');
+  const emptyState = document.getElementById('emptyState');
+  const shopCount = document.getElementById('shopCount');
+  const shopPageTitle = document.getElementById('shopPageTitle');
+  const breadcrumbCurrent = document.getElementById('breadcrumbCurrent');
+  const shopHeroImg = document.getElementById('shopHeroImg');
+  const activeFilterWrap = document.getElementById('activeFilterWrap');
+  const activeFilterText = document.getElementById('activeFilterText');
+  const clearFilterBtn = document.getElementById('clearFilterBtn');
+  const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+  const sortSelect = document.getElementById('sortSelect');
+  const searchInput = document.getElementById('searchInput');
+
+  // Set initial search value
+  if (currentSearch && searchInput) searchInput.value = currentSearch;
+
+  // ── Render Products ──
+  function renderProducts() {
+    let products;
+
+    if (currentSearch) {
+      products = searchProducts(currentSearch);
+      shopPageTitle.textContent = `Results for "${currentSearch}"`;
+      breadcrumbCurrent.textContent = 'Search';
+      activeFilterWrap.style.display = 'none';
+    } else if (currentCategory !== 'all') {
+      products = getProductsByCategory(currentCategory);
+      const label = CATEGORY_LABELS[currentCategory] || currentCategory;
+      shopPageTitle.textContent = label;
+      breadcrumbCurrent.textContent = label;
+      activeFilterWrap.style.display = 'inline-flex';
+      activeFilterText.textContent = label;
+      // Update hero image
+      const heroSrc = getCategoryImage(currentCategory, 'hero');
+      if (heroSrc) shopHeroImg.src = heroSrc;
+    } else {
+      products = getProductsByCategory('all');
+      shopPageTitle.textContent = 'Shop All';
+      breadcrumbCurrent.textContent = 'Shop All';
+      activeFilterWrap.style.display = 'none';
+    }
+
+    // Sort
+    products = sortProducts(products, currentSort);
+
+    // Count
+    shopCount.textContent = `${products.length} product${products.length !== 1 ? 's' : ''}`;
+
+    // Empty state
+    if (products.length === 0) {
+      productsGrid.innerHTML = '';
+      emptyState.style.display = 'block';
+      return;
+    }
+    emptyState.style.display = 'none';
+
+    // Render cards
+    productsGrid.innerHTML = products.map(p => `
+      <div class="product-card">
+        <a href="product.html?id=${p.id}" class="card-media img-zoom-container">
+          ${p.badge ? `<span class="card-badge">${p.badge}</span>` : ''}
+          <img src="${p.images[0]}" alt="${p.title}" loading="lazy" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#1a1510,#2a2218)'; this.parentElement.innerHTML += '<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;color:#C9A96E;font-size:2.5rem;font-family:Playfair Display,serif;letter-spacing:0.2em;\\'>HMY</div>';">
+          <div class="card-actions">
+            <button class="btn-primary btn-full quick-add-btn" data-id="${p.id}">
+              <i class="fa-solid fa-bag-shopping"></i> QUICK ADD
+            </button>
+          </div>
+        </a>
+        <div class="card-body">
+          <div class="card-category">${p.categoryLabel}</div>
+          <a href="product.html?id=${p.id}" class="card-title hover-underline">${p.title}</a>
+          <div class="card-pricing">
+            <span class="card-price">${formatPrice(p.price)}</span>
+            ${p.originalPrice ? `<span class="card-original-price">${formatPrice(p.originalPrice)}</span>` : ''}
+            ${p.originalPrice ? `<span class="card-discount">${Math.round((1 - p.price/p.originalPrice)*100)}% OFF</span>` : ''}
           </div>
         </div>
-        <a href="shop.html" class="nav-link active">SHOP ALL</a>
-      </nav>
-      <button class="btn-icon mobile-menu-btn" id="mobileMenuBtn" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
-      <a href="index.html" class="header-logo">HMY</a>
-      <div class="header-nav header-nav-right">
-        <a href="tryon.html" class="nav-link">TRY ON</a>
-        <a href="index.html#story" class="nav-link">OUR STORY</a>
-        <a href="index.html#contact" class="nav-link">CONTACT</a>
-        <div class="header-actions">
-          <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle Theme" title="Switch Theme">
-            <i class="fa-solid fa-moon"></i>
-          </button>
-          <button class="btn-icon" id="searchToggle" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
-          <button class="btn-icon cart-btn" id="openCartBtn" aria-label="Cart">
-            <i class="fa-solid fa-bag-shopping"></i>
-            <span class="cart-count" data-cart-count>0</span>
-          </button>
+      </div>
+    `).join('');
+
+    // Quick add buttons
+    productsGrid.querySelectorAll('.quick-add-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        const product = getProductById(btn.dataset.id);
+        if (!product) return;
+        Cart.addItem(product, product.sizes[0] || '', product.colors[0]?.name || '');
+        toast(`${product.title} added to bag`);
+      });
+    });
+
+    // Trigger stagger animation
+    productsGrid.classList.remove('visible');
+    void productsGrid.offsetWidth;
+    productsGrid.classList.add('visible');
+  }
+
+  // ── Event Listeners ──
+  sortSelect?.addEventListener('change', () => {
+    currentSort = sortSelect.value;
+    renderProducts();
+  });
+
+  clearFilterBtn?.addEventListener('click', () => {
+    currentCategory = 'all';
+    currentSearch = '';
+    window.history.replaceState({}, '', 'shop.html');
+    renderProducts();
+  });
+
+  resetFiltersBtn?.addEventListener('click', () => {
+    currentCategory = 'all';
+    currentSearch = '';
+    window.history.replaceState({}, '', 'shop.html');
+    renderProducts();
+  });
+
+  // ── Search ──
+  const searchToggle = document.getElementById('searchToggle');
+  const searchOverlay = document.getElementById('searchOverlay');
+  const searchCloseBtn = document.getElementById('searchCloseBtn');
+
+  searchToggle?.addEventListener('click', () => {
+    searchOverlay.classList.add('open');
+    setTimeout(() => searchInput.focus(), 300);
+  });
+  searchCloseBtn?.addEventListener('click', () => searchOverlay.classList.remove('open'));
+
+  searchInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && searchInput.value.trim()) {
+      currentSearch = searchInput.value.trim();
+      currentCategory = 'all';
+      window.history.replaceState({}, '', `shop.html?search=${encodeURIComponent(currentSearch)}`);
+      searchOverlay.classList.remove('open');
+      renderProducts();
+    }
+  });
+
+  // ── Mobile Menu ──
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const closeMobileMenu = document.getElementById('closeMobileMenu');
+  const mobileDrawer = document.getElementById('mobileDrawer');
+  const mobileOverlay = document.getElementById('mobileOverlay');
+
+  function closeMobile() { mobileDrawer.classList.remove('open'); mobileOverlay.classList.remove('open'); document.body.style.overflow = ''; }
+  mobileMenuBtn?.addEventListener('click', () => { mobileDrawer.classList.add('open'); mobileOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; });
+  closeMobileMenu?.addEventListener('click', closeMobile);
+  mobileOverlay?.addEventListener('click', closeMobile);
+
+  document.querySelectorAll('.mobile-accordion-trigger').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.nextElementSibling.classList.toggle('open');
+      const icon = btn.querySelector('i');
+      icon.classList.toggle('fa-plus'); icon.classList.toggle('fa-minus');
+    });
+  });
+
+  // ── Cart Drawer ──
+  const openCartBtn = document.getElementById('openCartBtn');
+  const closeCartBtn = document.getElementById('closeCartBtn');
+  const cartDrawer = document.getElementById('cartDrawer');
+  const cartOverlay = document.getElementById('cartOverlay');
+  const cartDrawerBody = document.getElementById('cartDrawerBody');
+  const clearCartBtn = document.getElementById('clearCartBtn');
+  const whatsappCheckoutBtn = document.getElementById('whatsappCheckoutBtn');
+
+  function openCart() { cartDrawer.classList.add('open'); cartOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; renderCartDrawer(); }
+  function closeCart() { cartDrawer.classList.remove('open'); cartOverlay.classList.remove('open'); document.body.style.overflow = ''; }
+
+  openCartBtn?.addEventListener('click', openCart);
+  closeCartBtn?.addEventListener('click', closeCart);
+  cartOverlay?.addEventListener('click', closeCart);
+  clearCartBtn?.addEventListener('click', () => { Cart.clear(); renderCartDrawer(); toast('Bag cleared'); });
+  whatsappCheckoutBtn?.addEventListener('click', () => { if (Cart.getCount() > 0) Cart.openWhatsApp(); });
+
+  function renderCartDrawer() {
+    const items = Cart.getItems();
+    document.getElementById('cartSubtotal').textContent = formatPrice(Cart.getSubtotal());
+    const ship = Cart.getShipping();
+    document.getElementById('cartShipping').textContent = Cart.getSubtotal() === 0 ? 'Rs. 0' : ship === 0 ? 'FREE' : formatPrice(ship);
+    document.getElementById('cartTotal').textContent = formatPrice(Cart.getTotal());
+
+    if (!items.length) {
+      cartDrawerBody.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon"><i class="fa-solid fa-bag-shopping"></i></div><p>Your bag is empty.</p></div>';
+      whatsappCheckoutBtn.disabled = true; whatsappCheckoutBtn.style.opacity = '0.4'; clearCartBtn.style.display = 'none';
+      return;
+    }
+    whatsappCheckoutBtn.disabled = false; whatsappCheckoutBtn.style.opacity = '1'; clearCartBtn.style.display = 'block';
+
+    cartDrawerBody.innerHTML = items.map(item => `
+      <div class="cart-item">
+        <img src="${item.image}" alt="" class="cart-item-img">
+        <div class="cart-item-info">
+          <div class="cart-item-title">${item.title}</div>
+          <div class="cart-item-meta">${item.size || ''}${item.size && item.color ? ' / ' : ''}${item.color || ''}</div>
+          <div class="cart-item-price">${formatPrice(item.price)}</div>
+          <div class="qty-selector" style="margin-top:6px;">
+            <button class="qty-btn" data-action="dec" data-key="${item.key}">−</button>
+            <span class="qty-value">${item.qty}</span>
+            <button class="qty-btn" data-action="inc" data-key="${item.key}">+</button>
+          </div>
         </div>
+        <button class="cart-item-remove" data-key="${item.key}"><i class="fa-solid fa-trash-can"></i></button>
       </div>
-    </div>
-    <div class="search-overlay" id="searchOverlay">
-      <div class="search-overlay-inner">
-        <input type="text" id="searchInput" placeholder="Search products..." autocomplete="off">
-        <button class="btn-icon" id="searchCloseBtn"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-    </div>
-  </header>
+    `).join('');
 
-  <!-- Mobile Drawer -->
-  <div class="mobile-drawer-overlay" id="mobileOverlay"></div>
-  <aside class="mobile-drawer" id="mobileDrawer">
-    <div class="mobile-drawer-header">
-      <span class="mobile-drawer-logo">HMY</span>
-      <button class="btn-icon" id="closeMobileMenu"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <nav class="mobile-nav">
-      <a href="index.html" class="mobile-nav-link">Home</a>
-      <div class="mobile-accordion">
-        <button class="mobile-accordion-trigger">Categories <i class="fa-solid fa-plus"></i></button>
-        <div class="mobile-accordion-content">
-          <span class="mobile-sub-heading">Men</span>
-          <a href="shop.html?cat=men-stitched" class="mobile-sub-link">Stitched</a>
-          <a href="shop.html?cat=men-unstitched" class="mobile-sub-link">Unstitched</a>
-          <span class="mobile-sub-heading">Women</span>
-          <a href="shop.html?cat=women-stitched" class="mobile-sub-link">Stitched</a>
-          <a href="shop.html?cat=women-unstitched" class="mobile-sub-link">Unstitched</a>
-          <span class="mobile-sub-heading">Fragrances</span>
-          <a href="shop.html?cat=perfumes" class="mobile-sub-link">Perfumes</a>
-          <a href="shop.html?cat=special-attar" class="mobile-sub-link">Special Attar</a>
-          <span class="mobile-sub-heading">Accessories</span>
-          <a href="shop.html?cat=islamic-topis" class="mobile-sub-link">Islamic Topis</a>
-        </div>
-      </div>
-      <a href="shop.html" class="mobile-nav-link active">Shop All</a>
-      <a href="index.html#story" class="mobile-nav-link">Our Story</a>
-      <a href="index.html#contact" class="mobile-nav-link">Contact</a>
-    </nav>
-  </aside>
+    cartDrawerBody.querySelectorAll('.qty-btn').forEach(b => b.addEventListener('click', () => { if(b.dataset.action==='inc') Cart.increment(b.dataset.key); else Cart.decrement(b.dataset.key); renderCartDrawer(); }));
+    cartDrawerBody.querySelectorAll('.cart-item-remove').forEach(b => b.addEventListener('click', () => { Cart.removeItem(b.dataset.key); renderCartDrawer(); toast('Item removed'); }));
+  }
 
-  <!-- Shop Hero Banner -->
-  <div class="shop-hero" id="shopHero">
-    <img id="shopHeroImg" src="https://placehold.co/1600x600/1A1A1A/C9A96E?text=HMY+Shop&font=playfair-display" alt="Shop">
-    <div class="shop-hero-overlay"></div>
-    <div class="shop-hero-content">
-      <div class="breadcrumb">
-        <a href="index.html">Home</a>
-        <span class="separator">/</span>
-        <span class="current" id="breadcrumbCurrent">Shop All</span>
-      </div>
-      <h1 class="section-heading" id="shopPageTitle" style="margin-bottom: 0;">Shop All</h1>
-    </div>
-  </div>
+  // ── Escape Key ──
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') { closeCart(); closeMobile(); searchOverlay?.classList.remove('open'); document.body.style.overflow = ''; }
+  });
 
-  <!-- Toolbar -->
-  <div class="shop-toolbar">
-    <div class="shop-toolbar-left">
-      <span class="shop-count" id="shopCount">0 products</span>
-      <div id="activeFilterWrap" style="display:none;">
-        <div class="filter-tag">
-          <span id="activeFilterText"></span>
-          <button id="clearFilterBtn"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-      </div>
-    </div>
-    <div class="shop-sort">
-      <select id="sortSelect">
-        <option value="featured">Sort by: Featured</option>
-        <option value="price-low">Price: Low to High</option>
-        <option value="price-high">Price: High to Low</option>
-        <option value="rating">Top Rated</option>
-        <option value="newest">Newest</option>
-      </select>
-    </div>
-  </div>
+  // ── Announcement hide on scroll ──
+  const announcementBar = document.getElementById('announcementBar');
+  const siteHeader = document.getElementById('siteHeader');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) { announcementBar.style.transform = 'translateY(-100%)'; siteHeader.style.top = '0'; }
+    else { announcementBar.style.transform = 'translateY(0)'; siteHeader.style.top = '36px'; }
+  }, { passive: true });
 
-  <!-- Products Grid -->
-  <div class="container" style="padding-bottom: var(--space-section);">
-    <div class="products-grid stagger" id="productsGrid"></div>
-    <div class="empty-state" id="emptyState" style="display:none;">
-      <div class="empty-state-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
-      <h3>No Products Found</h3>
-      <p>Try adjusting your filters or search query.</p>
-      <button class="btn-outline" id="resetFiltersBtn">View All Products</button>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-    <div class="footer-grid">
-      <div class="footer-col">
-        <span class="footer-brand">HMY</span>
-        <p class="footer-desc">Luxury Eastern Fashion & Royal Fragrances — crafted with passion and precision since 2020.</p>
-        <div class="footer-socials">
-          <a href="#"><i class="fa-brands fa-instagram"></i></a>
-          <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
-          <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-        </div>
-      </div>
-      <div class="footer-col"><h4>SHOP</h4><a href="shop.html?cat=men-stitched">Men — Stitched</a><a href="shop.html?cat=men-unstitched">Men — Unstitched</a><a href="shop.html?cat=women-stitched">Women — Stitched</a><a href="shop.html?cat=women-unstitched">Women — Unstitched</a><a href="shop.html?cat=perfumes">Perfumes</a><a href="shop.html?cat=special-attar">Special Attar</a></div>
-      <div class="footer-col"><h4>HELP</h4><a href="#">Shipping & Returns</a><a href="#">Track Order</a><a href="#">Size Guide</a><a href="#">FAQs</a></div>
-      <div class="footer-col"><h4>CONTACT</h4><a href="#"><i class="fa-solid fa-envelope"></i> support@hmy-store.com</a><a href="#"><i class="fa-solid fa-phone"></i> +92 300 123 4567</a><a href="#"><i class="fa-solid fa-location-dot"></i> HMY Boutique, Pakistan</a></div>
-    </div>
-    <div class="footer-bottom">
-      <span>&copy; 2026 HMY. All Rights Reserved.</span>
-      <div class="payment-icons"><i class="fa-brands fa-cc-visa"></i><i class="fa-brands fa-cc-mastercard"></i><i class="fa-solid fa-money-bill-wave"></i></div>
-    </div>
-  </footer>
-
-  <!-- Cart Drawer -->
-  <div class="cart-drawer-overlay" id="cartOverlay"></div>
-  <aside class="cart-drawer" id="cartDrawer">
-    <div class="cart-drawer-header">
-      <h3>YOUR BAG (<span data-cart-count>0</span>)</h3>
-      <button class="btn-icon" id="closeCartBtn"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-    <div class="cart-drawer-body" id="cartDrawerBody"></div>
-    <div class="cart-drawer-footer">
-      <div class="cart-summary-row"><span>Subtotal</span><span id="cartSubtotal">Rs. 0</span></div>
-      <div class="cart-summary-row"><span>Delivery</span><span id="cartShipping">Calculated</span></div>
-      <div class="cart-summary-row total"><span>Total</span><span id="cartTotal">Rs. 0</span></div>
-      <button class="btn-whatsapp btn-full" id="whatsappCheckoutBtn" style="margin-top:16px;"><i class="fa-brands fa-whatsapp"></i> ORDER VIA WHATSAPP</button>
-      <a href="cart.html" class="btn-outline btn-full" style="margin-top:8px;text-align:center;">VIEW FULL CART</a>
-      <button class="btn-ghost btn-full" id="clearCartBtn" style="margin-top:4px;">Clear Bag</button>
-    </div>
-  </aside>
-
-  <div class="toast-container" id="toastContainer"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/config.js"></script>
-  <script src="js/products.js"></script>
-  <script src="js/cart.js"></script>
-  <script src="js/shop.js"></script>
-</body>
-</html>
+  // ── Init ──
+  await StoreData.load();   // fetch products + category images from the cloud
+  renderProducts();
+  renderCartDrawer();
+});
