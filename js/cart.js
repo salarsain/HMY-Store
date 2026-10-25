@@ -292,84 +292,16 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ==========================================================================
-// CMS Content Loader — reads admin overrides from localStorage + IndexedDB
+// CMS Content Loader — reads admin changes from the cloud (Supabase)
 // ==========================================================================
 const CMSContent = {
-  STORAGE_KEY: 'hmy_site_content',
-  DB_NAME: 'hmy_videos_db',
-  DB_STORE: 'videos',
-
   async init() {
-    this.applyFromLocalStorage();
-    await this.applyUploadedVideos();
-  },
-
-  applyFromLocalStorage() {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
-    if (!stored) return;
-
-    try {
-      const content = JSON.parse(stored);
-      this.applyAnnouncements(content.announcements);
-      this.applyHero(content.hero);
-      this.applyStory(content.story);
-    } catch (e) {
-      console.warn('CMS content parse error:', e);
-    }
-  },
-
-  // IndexedDB helper
-  _openDB() {
-    return new Promise((resolve, reject) => {
-      const req = indexedDB.open(this.DB_NAME, 1);
-      req.onupgradeneeded = () => req.result.createObjectStore(this.DB_STORE);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  },
-
-  async _getVideo(key) {
-    try {
-      const db = await this._openDB();
-      return new Promise((resolve) => {
-        const tx = db.transaction(this.DB_STORE, 'readonly');
-        const req = tx.objectStore(this.DB_STORE).get(key);
-        req.onsuccess = () => resolve(req.result || null);
-        req.onerror = () => resolve(null);
-      });
-    } catch { return null; }
-  },
-
-  async applyUploadedVideos() {
-    // Hero videos from IndexedDB
-    for (let i = 0; i < 3; i++) {
-      const blob = await this._getVideo('hero-video-' + i);
-      if (blob) {
-        const el = document.getElementById('heroPanel' + i);
-        if (el) {
-          const videoEl = el.querySelector('video');
-          if (videoEl) {
-            const url = URL.createObjectURL(blob);
-            videoEl.innerHTML = `<source src="${url}" type="video/mp4">`;
-            videoEl.load();
-          }
-        }
-      }
-    }
-
-    // Story video from IndexedDB
-    const storyBlob = await this._getVideo('story-video');
-    if (storyBlob) {
-      const storySection = document.getElementById('story');
-      if (storySection) {
-        const videoEl = storySection.querySelector('video');
-        if (videoEl) {
-          const url = URL.createObjectURL(storyBlob);
-          videoEl.innerHTML = `<source src="${url}" type="video/mp4">`;
-          videoEl.load();
-        }
-      }
-    }
+    try { await StoreData.load(); } catch (e) { console.warn('CMS load failed:', e); }
+    const content = StoreData.getContent();
+    if (!content) return;
+    this.applyAnnouncements(content.announcements);
+    this.applyHero(content.hero);
+    this.applyStory(content.story);
   },
 
   applyAnnouncements(announcements) {
